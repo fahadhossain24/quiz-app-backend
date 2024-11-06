@@ -7,7 +7,7 @@ import { rateLimit } from 'express-rate-limit'
 import fileUpload from 'express-fileupload'
 import globalErrorHandler from './app/middlewares/globalErrorHandler.js'
 import notFound from './app/middlewares/notFound.js'
-import Router from './app/routers/version1/index.js'
+import router from './app/routers/version1/index.js'
 import { StatusCodes } from 'http-status-codes'
 import sendResponse from './shared/sendResponse.js'
 import cookieParser from 'cookie-parser'
@@ -34,7 +34,7 @@ app.use(morgan('dev'))
 app.use(limiter)
 
 // application middleware
-app.use('/v1', Router)
+app.use('/v1', router)
 
 app.get('/health_check', (req, res) => {
   sendResponse(res, {

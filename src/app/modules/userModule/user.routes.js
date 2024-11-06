@@ -1,7 +1,7 @@
 import express from 'express'
-import requestValidator from '../../middlewares/requestValidator'
-import UserValidationZodSchema from './user.validation'
-import userControllers from './user.controllers'
+import requestValidator from '../../middlewares/requestValidator.js'
+import UserValidationZodSchema from './user.validation.js'
+import userControllers from './user.controllers.js'
 // const authorization = require('../../middlewares/authorization')
 
 const userRouter = express.Router()

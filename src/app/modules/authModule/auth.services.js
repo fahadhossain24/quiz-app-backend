@@ -1,4 +1,4 @@
-import User from '../userModule/user.model'
+import User from '../userModule/user.model.js'
 
 // service for get user by email
 const getUserByEmail = async(email) => {

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import sendResponse from '../../shared/sendResponse';
+import sendResponse from '../../shared/sendResponse.js';
 
 const requestValidator = (schema) => {
     return (req, res, next) => {

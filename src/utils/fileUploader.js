@@ -1,4 +1,4 @@
-import CustomError from '../app/errors'
+import CustomError from '../app/errors/index.js'
 import fs from 'fs'
 import path from 'path'
 

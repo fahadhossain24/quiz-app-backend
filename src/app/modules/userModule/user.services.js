@@ -1,4 +1,4 @@
-import User from './user.model'
+import User from './user.model.js'
 
 // service for create new user
 const createUser = async (data) => {

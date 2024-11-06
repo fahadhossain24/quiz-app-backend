@@ -1,7 +1,7 @@
-import BadRequestError from "./error.badRequest";
-import ForbiddenError from "./error.forbidden";
-import NotFoundError from "./error.notFound";
-import UnAuthorizedError from "./error.unAuthorized";
+import BadRequestError from "./error.badRequest.js";
+import ForbiddenError from "./error.forbidden.js";
+import NotFoundError from "./error.notFound.js";
+import UnAuthorizedError from "./error.unAuthorized.js";
 
 const CustomError = {
   BadRequestError,

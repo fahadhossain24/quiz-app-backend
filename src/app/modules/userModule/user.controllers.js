@@ -1,20 +1,10 @@
-import sendResponse from '../../../shared/sendResponse'
-import fileUploader from '../../../utils/fileUploader'
-import IdGenerator from '../../../utils/idGenerator'
-import sendMail from '../../../utils/sendEmail'
-import userServices from './user.services'
-
-/* eslint-disable no-unused-vars */
-const { StatusCodes } = require('http-status-codes')
-// const sendResponse = require('../../../shared/sendResponse');
-// const fileUploader = require('../../../utils/fileUploader');
-const CustomError = require('../../errors')
-const {
-  createVerification
-} = require('../varificationModule/verification.services')
-// const userServices = require('./user.services');
-const { server_base_url } = require('../../../config')
-// const sendMail = require('../../../utils/sendEmail');
+import sendResponse from '../../../shared/sendResponse.js'
+import fileUploader from '../../../utils/fileUploader.js'
+import IdGenerator from '../../../utils/idGenerator.js'
+import sendMail from '../../../utils/sendEmail.js'
+import userServices from './user.services.js'
+import {StatusCodes} from 'http-status-codes'
+import CustomError from '../../errors/index.js'
 
 // controller for create new user
 const createUser = async (req, res) => {

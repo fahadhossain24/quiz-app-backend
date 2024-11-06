@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import nodemailer from 'nodemailer'
-import config from '../config'
-import CustomError from '../app/errors';
+import config from '../config/index.js'
+import CustomError from '../app/errors/index.js';
 
 const sendMail = async ({ from, to, subject, text }) => {
     try {

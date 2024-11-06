@@ -1,7 +1,7 @@
 import express from 'express'
-import authControllers from './auth.controllers'
-import requestValidator from '../../middlewares/requestValidator'
-import AuthValidation from './auth.validation'
+import authControllers from './auth.controllers.js'
+import requestValidator from '../../middlewares/requestValidator.js'
+import AuthValidation from './auth.validation.js'
 // const requestValidator = require('../../middlewares/requestValidator')
 // const AuthValidation = require('./auth.validation')
 // const authorization = require('../../middlewares/authorization')
