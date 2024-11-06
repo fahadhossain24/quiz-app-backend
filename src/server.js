@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import config from './config/index.js'
 import app from './app.js'
-const port = 8001
+const port = 5005
 
 const dbConnection = async () => {
   mongoose.connect(config.database_url)

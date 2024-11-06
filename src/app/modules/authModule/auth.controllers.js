@@ -5,8 +5,9 @@ import authServices from './auth.services.js'
 import IdGenerator from '../../../utils/idGenerator.js'
 import User from '../userModule/user.model.js'
 import sendMail from '../../../utils/sendEmail.js'
-import CustomError from '../../errors'
-import config from '../../../config'
+import CustomError from '../../errors/index.js'
+import config from '../../../config/index.js'
+import userServices from '../userModule/user.services.js'
 
 // controller for user login
 const userLogin = async (req, res) => {

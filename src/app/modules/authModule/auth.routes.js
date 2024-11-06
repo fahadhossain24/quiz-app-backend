@@ -34,7 +34,7 @@ authRoute.post('/verify-otp', authControllers.verifyOTP)
 authRoute.post('/reset-password', authControllers.resetPassword)
 
 // route for change password
-authRoute.post('/change-password', requestValidator(AuthValidation.changePasswordZodSchema), authControllers.changePassword)
+authRoute.post('/change-password', authControllers.changePassword)
 
 // route for user stability (get new accesstoken)
 authRoute.post('/refresh-token',  authControllers.getAccessTokenByRefreshToken)

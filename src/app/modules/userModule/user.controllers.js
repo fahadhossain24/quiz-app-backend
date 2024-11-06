@@ -90,9 +90,9 @@ const deleteSpecificUser = async (req, res) => {
 const updateSpecificUser = async (req, res) => {
   const { id } = req.params
   const data = req.body
-  if (data.userId || data.password || data.isEmailVerified) {
+  if (data.userId || data.password || data.email || data.isEmailVerified) {
     throw new CustomError.BadRequestError(
-      "You can't update usesrId, verified status and password directly!"
+      "You can't update usesrId, email, verified status and password directly!"
     )
   }
 
