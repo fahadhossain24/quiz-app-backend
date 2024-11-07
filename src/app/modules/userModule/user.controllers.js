@@ -3,26 +3,18 @@ import fileUploader from '../../../utils/fileUploader.js'
 import IdGenerator from '../../../utils/idGenerator.js'
 import sendMail from '../../../utils/sendEmail.js'
 import userServices from './user.services.js'
-import {StatusCodes} from 'http-status-codes'
+import { StatusCodes } from 'http-status-codes'
 import CustomError from '../../errors/index.js'
 
 // controller for create new user
 const createUser = async (req, res) => {
   const userData = req.body
-  console.log(userData)
-
   const userId = IdGenerator.generateUserId()
-  const userImagePath = await fileUploader(
-    req.files,
-    `user-image-${userId}`,
-    'image'
-  )
 
   const expireDate = new Date()
   expireDate.setMinutes(expireDate.getMinutes() + 30)
 
   userData.userId = userId
-  userData.image = userImagePath
   userData.verification = {
     code: IdGenerator.generateCode(),
     expireDate
@@ -33,7 +25,7 @@ const createUser = async (req, res) => {
     throw new CustomError.BadRequestError('Failed to create new user!')
   }
 
-  const { password, ...userInfoAcceptPass } = user.toObject();
+  const { password, ...userInfoAcceptPass } = user.toObject()
 
   // send email verification mail
   const content = `Your email veirfication code is ${userData?.verification?.code}`
