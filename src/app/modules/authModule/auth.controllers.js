@@ -130,12 +130,12 @@ const userEmailVerify = async (req, res) => {
 
 // controller for send otp
 const sendOTP = async (req, res) => {
-  const { id, email } = req.body
+  const { email } = req.body
   if (!email) {
     throw new CustomError.BadRequestError('Missing data in request body!')
   }
 
-  const user = await userServices.getSpecificUser(id)
+  const user = await authServices.getUserByEmail(email)
   if (!user) {
     throw new CustomError.BadRequestError('User not found!')
   }
@@ -188,12 +188,12 @@ const sendOTP = async (req, res) => {
 
 // controller for verify otp
 const verifyOTP = async (req, res) => {
-  const { id, otp } = req.body
-  if (!id || !otp) {
+  const {email, otp } = req.body
+  if (!email || !otp) {
     throw new CustomError.BadRequestError('Missing data in request body!')
   }
 
-  const user = await userServices.getSpecificUser(id)
+  const user = await authServices.getUserByEmail(email)
   if (!user) {
     throw new CustomError.BadRequestError('User not found!')
   }
@@ -217,12 +217,12 @@ const verifyOTP = async (req, res) => {
 
 // controller for reset password
 const resetPassword = async (req, res) => {
-  const { id, newPassword } = req.body
-  if (!id || !newPassword) {
+  const { email, newPassword } = req.body
+  if (!email || !newPassword) {
     throw new CustomError.BadRequestError('Missing data in request body!')
   }
 
-  const user = await userServices.getSpecificUser(id)
+  const user = await authServices.getUserByEmail(email)
   if (!user) {
     throw new CustomError.BadRequestError('User not found!')
   }
