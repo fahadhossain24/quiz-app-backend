@@ -9,6 +9,7 @@ import CustomError from '../../errors/index.js'
 // controller for create new user
 const createUser = async (req, res) => {
   const userData = req.body
+  console.log(userData)
 
   const userId = IdGenerator.generateUserId()
   const userImagePath = await fileUploader(

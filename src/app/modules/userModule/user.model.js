@@ -31,8 +31,12 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required!']
     },
     country: {
-        type: String,
-        required: true,
+        common: {
+          type: String,
+          required: true,
+        },
+        shortName: String,
+        flagUrl: String,
     },
     university: {
         type: String,

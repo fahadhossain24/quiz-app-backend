@@ -11,9 +11,6 @@ const createUserZodSchema = z.object({
     password: z.string({
       required_error: 'Password is required!'
     }),
-    country: z.string({
-      required_error: 'Country is required!'
-    }),
     university: z.string({
       required_error: 'University is required!'
     }),
