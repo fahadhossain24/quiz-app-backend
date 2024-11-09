@@ -65,6 +65,21 @@ const createSpeciality = async (req, res) => {
   })
 }
 
+// controller for get all specialities
+const getAllSeciality = async (req, res) => {
+  const specialities = await specialityServices.getAllSpeciality()
+  if (specialities.length === 0) {
+    throw new CustomError.BadRequestError('No specialities found!')
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    status: 'success',
+    message: 'Specialities retrive successfull!',
+    data: specialities
+  })
+}
+
 // controller for get specific speciality
 const getSpecificSeciality = async (req, res) => {
   const { id } = req.params
@@ -86,18 +101,52 @@ const getSpecificSeciality = async (req, res) => {
 }
 
 // controller for update specific speciality
-const updateSpeciality = async (req, res) => {
+// const updateSpeciality = async (req, res) => {
+//   const { id } = req.params
+//   const data = req.body
+
+//   const speciality = await specialityServices.getSpecificSpeciality(id)
+//   if (!speciality) {
+//     throw new CustomError.BadRequestError('No speciality found!')
+//   }
+
+//   const updatedSpeciality = await specialityServices.updateSpecificSpeciality(
+//     id,
+//     data
+//   )
+//   if (!updatedSpeciality.modifiedCount) {
+//     throw new CustomError.BadRequestError('Failed to update speciality!')
+//   }
+
+//   sendResponse(res, {
+//     statusCode: StatusCodes.OK,
+//     status: 'success',
+//     message: 'Speciality modified successfull!'
+//   })
+// }
+
+// controller for modify speciality without conditions
+const modifySpeciality = async (req, res) => {
   const { id } = req.params
-  const data = req.body
+  const specialityData = req.body
 
   const speciality = await specialityServices.getSpecificSpeciality(id)
   if (!speciality) {
     throw new CustomError.BadRequestError('No speciality found!')
   }
 
+  if (req.files || req.files.image) {
+    const imagePath = await fileUploader(
+      req.files,
+      `speciality-image-${specialityData.name}`,
+      'image'
+    )
+    specialityData.image = imagePath
+  }
+
   const updatedSpeciality = await specialityServices.updateSpecificSpeciality(
     id,
-    data
+    specialityData
   )
   if (!updatedSpeciality.modifiedCount) {
     throw new CustomError.BadRequestError('Failed to update speciality!')
@@ -107,6 +156,49 @@ const updateSpeciality = async (req, res) => {
     statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Speciality modified successfull!'
+  })
+}
+
+// controller for modify speciality without conditions
+const modifyCondition = async (req, res) => {
+  const { id } = req.params
+  const conditionData = req.body
+
+  if(!conditionData.identifier){
+    throw new CustomError.BadRequestError('Missing identifier in request body. Please use 1, 2 or 3 as identifier!')
+  }
+
+  if(conditionData.identifier <= 0 && conditionData.identifier > 3){
+    throw new CustomError.BadRequestError('Sorry, You are allowed to modify only 3 condition!')
+  }
+
+  const speciality = await specialityServices.getSpecificSpeciality(id)
+  if (!speciality) {
+    throw new CustomError.BadRequestError('No speciality found!')
+  }
+
+  // Check if a new PDF file for condition1 is provided
+  if (req.files && req.files.pdf) {
+    const pdfPath = await fileUploader(
+      req.files,
+      `condition1-${conditionData.name}-pdf-of-${speciality.name}`,
+      'pdf'
+    )
+
+    conditionData.pdf = pdfPath
+  }
+
+  const updatedCondition =
+    await specialityServices.updateSingleSpecialityCondition(id, conditionData)
+
+  if (!updatedCondition.isModified) {
+    throw new CustomError.BadRequestError('Failed to update condition!')
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Condition updated successfull!'
   })
 }
 
@@ -129,7 +221,9 @@ const deleteSpeciality = async (req, res) => {
 
 export default {
   createSpeciality,
+  getAllSeciality,
   getSpecificSeciality,
-  updateSpeciality,
+  modifySpeciality,
+  modifyCondition,
   deleteSpeciality
 }
