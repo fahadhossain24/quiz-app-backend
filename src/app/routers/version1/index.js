@@ -4,6 +4,7 @@ import authRoute from '../../modules/authModule/auth.routes.js'
 import questionRouter from '../../modules/questionModules/question/question.routes.js'
 import specialityRouter from '../../modules/specialityModule/speciality.routes.js'
 import sponsorRouter from '../../modules/sponsorModule/sponsor.routes.js'
+import privacyPolicyRouter from '../../modules/privacyPolicyModule/privacyPolicy.routes.js'
 
 const router = express.Router()
 
@@ -12,5 +13,6 @@ router.use('/auth', authRoute)
 router.use('/question', questionRouter)
 router.use('/speciality', specialityRouter)
 router.use('/sponsor', sponsorRouter)
+router.use('/privacy-policy', privacyPolicyRouter)
 
 export default router
