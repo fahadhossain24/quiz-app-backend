@@ -73,7 +73,7 @@ const getAllSeciality = async (req, res) => {
   }
 
   sendResponse(res, {
-    statusCode: StatusCodes.CREATED,
+    statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Specialities retrive successfull!',
     data: specialities
@@ -93,7 +93,7 @@ const getSpecificSeciality = async (req, res) => {
   }
 
   sendResponse(res, {
-    statusCode: StatusCodes.CREATED,
+    statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Speciality retrive successfully!',
     data: speciality
