@@ -75,7 +75,11 @@ const userSchema = new mongoose.Schema(
       }
     },
     xp: Number,
-    rank: Number
+    rank: Number,
+    isActive: {
+      type: Boolean,
+      default: true,
+    }
   },
   {
     timestamps: true

@@ -88,9 +88,7 @@ const updateSpecificUser = async (req, res) => {
   const { id } = req.params
   const data = req.body
   if (data.userId || data.password || data.email || data.isEmailVerified) {
-    throw new CustomError.BadRequestError(
-      "You can't update usesrId, email, verified status and password directly!"
-    )
+    throw new CustomError.BadRequestError("You can't update usesrId, email, verified status and password directly!")
   }
 
   const updatedUser = await userServices.updateSpecificUser(id, data)
@@ -112,19 +110,13 @@ const changeUserProfileImage = async (req, res) => {
 
   const user = await userServices.getSpecificUser(id)
 
-  const userImagePath = await fileUploader(
-    files,
-    `user-image-${user.userId}`,
-    'image'
-  )
+  const userImagePath = await fileUploader(files, `user-image-${user.userId}`, 'image')
   const updateUser = await userServices.updateSpecificUser(id, {
     image: userImagePath
   })
 
   if (!updateUser.modifiedCount) {
-    throw new CustomError.BadRequestError(
-      'Failed to change user profile image!'
-    )
+    throw new CustomError.BadRequestError('Failed to change user profile image!')
   }
 
   sendResponse(res, {
@@ -134,10 +126,52 @@ const changeUserProfileImage = async (req, res) => {
   })
 }
 
+// controller for search users(opponents)
+const findOpponent = async (req, res) => {
+  const { fullName, email, country, university, profession } = req.query
+
+  const searchCriteria = {}
+
+  const buildMultiWordRegex = (query) => {
+    const words = query.trim().split(/\s+/) // Split by spaces and remove extra whitespace
+    const regexPattern = words.map((word) => `(?=.*${word})`).join('') // Create pattern to match all words
+    return new RegExp(regexPattern, 'i') // 'i' for case-insensitive
+  }
+
+  if (fullName) {
+    searchCriteria.fullName = buildMultiWordRegex(fullName)
+  }
+  if (email) {
+    searchCriteria.email = buildMultiWordRegex(email)
+  }
+  if (country) {
+    searchCriteria['country.common'] = buildMultiWordRegex(country)
+  }
+  if (university) {
+    searchCriteria.university = buildMultiWordRegex(university)
+  }
+  if (profession) {
+    searchCriteria.profession = buildMultiWordRegex(profession)
+  }
+  searchCriteria.isActive = true
+  console.log(searchCriteria)
+
+  // Perform the search query
+  const users = await userServices.searchOpponent(searchCriteria)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Opponents retrive successfull.',
+    data: users
+  })
+}
+
 export default {
   createUser,
   getSpecificUser,
   deleteSpecificUser,
   updateSpecificUser,
-  changeUserProfileImage
+  changeUserProfileImage,
+  findOpponent
 }

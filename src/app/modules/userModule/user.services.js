@@ -22,9 +22,15 @@ const deleteSpecificUser = async (id) => {
   return await User.deleteOne({ _id: id })
 }
 
+// service for find user(opponent)
+const searchOpponent = async (searchCriteria) => {
+  return await User.find(searchCriteria).select('-password -verification');
+}
+
 export default {
   createUser,
   getSpecificUser,
   updateSpecificUser,
-  deleteSpecificUser
+  deleteSpecificUser,
+  searchOpponent,
 }

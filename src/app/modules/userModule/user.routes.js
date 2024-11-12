@@ -15,6 +15,9 @@ userRouter.post(
   userControllers.createUser
 )
 
+// find opponents
+userRouter.get('/search', userControllers.findOpponent)
+
 // get specific user
 userRouter.get('/:id', requestValidator(UserValidationZodSchema.getSpecificUserZodSchema), userControllers.getSpecificUser)
 
