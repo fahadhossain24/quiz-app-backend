@@ -10,6 +10,7 @@ import quizSessionServices from './quizSession.services.js'
 import sendResponse from '../../../../shared/sendResponse.js'
 import userServices from '../../userModule/user.services.js'
 import matchHistoryServices from '../matchHistory/matchHistory.services.js'
+import friendServices from '../../friendModule/friend.services.js'
 
 // controllers for create quiz session
 const createQuizSession = async (req, res) => {
@@ -73,6 +74,9 @@ const createQuizSession = async (req, res) => {
 
   // Track match history for the player
   await matchHistoryServices.updateMatchHistory(quizSessionData.participantId, opponentId, playerQuizResult, playerNewXP)
+
+  // make friend or update existing friend playing time
+  await friendServices.updateFriend(quizSessionData.participantId, opponentId, matchDate)
 
   // Prepare failed questions map to track incorrectly answered questions
   const failedQuestionsMap = new Map(

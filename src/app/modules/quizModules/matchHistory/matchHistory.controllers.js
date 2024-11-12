@@ -9,8 +9,8 @@ const getRecentMatchHistoryByUserId = async(req, res) => {
     if(!userId){
         throw new CustomError.BadRequestError("Missing userId in request params!")
     }
-    const recentMatchHistories = await matchHistoryServices.recentMatchHistoryByUserId(userId);
-    if(!recentMatchHistories.length === 0){
+    const recentMatchHistory = await matchHistoryServices.recentMatchHistoryByUserId(userId);
+    if(!recentMatchHistory){
         throw new CustomError.BadRequestError("No match found!")
     }
 
@@ -18,7 +18,7 @@ const getRecentMatchHistoryByUserId = async(req, res) => {
         statusCode: StatusCodes.OK,
         status: 'success',
         message: 'Matches retrive successfull!',
-        data: recentMatchHistories,
+        data: recentMatchHistory,
       })
 }
 
