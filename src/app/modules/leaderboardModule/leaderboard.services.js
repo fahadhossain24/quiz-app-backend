@@ -32,9 +32,15 @@ const updateLeaderboardRank = async() => {
       }
 }
 
+// service for get leaderboard by userId
+const getLeaderboardByUserId = async(userId) => {
+    return await Leaderboard.findOne({userId}).select(['xp', 'rank']);
+}
+
 
 export default {
     getOrCreateLeaderboardOfAUser,
     updateLeaderboardXPByUser,
     updateLeaderboardRank,
+    getLeaderboardByUserId,
 }

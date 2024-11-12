@@ -74,6 +74,8 @@ const userSchema = new mongoose.Schema(
         default: null
       }
     },
+    xp: Number,
+    rank: Number
   },
   {
     timestamps: true

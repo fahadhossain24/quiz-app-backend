@@ -56,6 +56,17 @@ const createQuizSession = async (req, res) => {
   // Update leaderboard ranks asynchronously to avoid blocking response
   leaderboardServices.updateLeaderboardRank()
 
+  // retrive user by participantId
+  const user = await userServices.getSpecificUser(quizSessionData.participantId)
+
+  // retrive leaderboard by perticipantId
+  const leaderboardByUser = await leaderboardServices.getLeaderboardByUserId(quizSessionData.participantId)
+
+  // udpate user by her xp and rank
+  user.xp = leaderboardByUser.xp
+  user.rank = leaderboardByUser.rank
+  await user.save()
+
   // Track match history for the player
   await matchHistoryServices.updateMatchHistory(quizSessionData.participantId, opponentId, playerQuizResult, playerNewXP)
 

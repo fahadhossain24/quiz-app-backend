@@ -35,10 +35,12 @@ quizSessionSchema.pre('save', async function (next) {
     error.statusCode = 400
     return next(error)
   }
-  
+
   next()
 })
 
 const QuizSession = mongoose.model('quizSession', quizSessionSchema)
 
 export default QuizSession
+
+

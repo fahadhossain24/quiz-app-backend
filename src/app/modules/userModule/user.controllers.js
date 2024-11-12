@@ -5,6 +5,7 @@ import sendMail from '../../../utils/sendEmail.js'
 import userServices from './user.services.js'
 import { StatusCodes } from 'http-status-codes'
 import CustomError from '../../errors/index.js'
+import leaderboardServices from '../leaderboardModule/leaderboard.services.js'
 
 // controller for create new user
 const createUser = async (req, res) => {
@@ -55,6 +56,9 @@ const getSpecificUser = async (req, res) => {
   if (!user) {
     throw new CustomError.BadRequestError('No user found!')
   }
+
+  // const userLeaderboard = await leaderboardServices.getLeaderboardByUserId(id);
+  // console.log(userLeaderboard)
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
