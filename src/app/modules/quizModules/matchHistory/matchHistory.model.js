@@ -15,6 +15,7 @@ const matchHistorySchema = new mongoose.Schema(
         },
         result: String,
         xp: Number,
+        date: Date
       }
     ]
   },

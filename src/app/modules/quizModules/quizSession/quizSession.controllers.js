@@ -31,14 +31,14 @@ const createQuizSession = async (req, res) => {
   const opponentQuizSession = await quizSessionServices.getQuizSessionByQuizIdAndOpponentId(quizSessionData.quizId, opponentId)
 
   // If the opponent's session doesn't exist, respond with pending status
-    if (!opponentQuizSession) {
-      return sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        status: 'pending',
-        message: 'Waiting for opponent submission.',
-        data: { result: 'pending' }
-      })
-    }
+  if (!opponentQuizSession) {
+    return sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      status: 'pending',
+      message: 'Waiting for opponent submission.',
+      data: { result: 'pending' }
+    })
+  }
 
   // Determine result for the current player based on scores
   const playerQuizResult = playerQuizSession.score > opponentQuizSession.score ? 'win' : 'loss'
@@ -61,11 +61,15 @@ const createQuizSession = async (req, res) => {
 
   // retrive leaderboard by perticipantId
   const leaderboardByUser = await leaderboardServices.getLeaderboardByUserId(quizSessionData.participantId)
+  const matchDate = new Date()
 
   // udpate user by her xp and rank
-  user.xp = leaderboardByUser.xp
-  user.rank = leaderboardByUser.rank
-  await user.save()
+  if (user) {
+    user.xp = leaderboardByUser.xp
+    user.rank = leaderboardByUser.rank
+    user.date = matchDate
+    await user.save()
+  }
 
   // Track match history for the player
   await matchHistoryServices.updateMatchHistory(quizSessionData.participantId, opponentId, playerQuizResult, playerNewXP)

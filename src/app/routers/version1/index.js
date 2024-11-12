@@ -9,6 +9,7 @@ import termsConditionRouter from '../../modules/termsConditionModule/termsCondit
 import infoRouter from '../../modules/infoModeModule/info.routes.js'
 import quizRouter from '../../modules/quizModules/quiz/quiz.routes.js'
 import quizSessionRouter from '../../modules/quizModules/quizSession/quizSession.routes.js'
+import matchHistoryRouter from '../../modules/quizModules/matchHistory/matchHistory.routes.js'
 
 const router = express.Router()
 
@@ -17,6 +18,7 @@ router.use('/auth', authRoute)
 router.use('/question', questionRouter)
 router.use('/quiz', quizRouter)
 router.use('/quiz-session', quizSessionRouter)
+router.use('/match-history', matchHistoryRouter)
 router.use('/speciality', specialityRouter)
 router.use('/sponsor', sponsorRouter)
 router.use('/privacy-policy', privacyPolicyRouter)
