@@ -19,7 +19,7 @@ authRoute.post(
 authRoute.post('/email-verification/resend-code', authControllers.resendEmailVerificationCode)
 
 // route for user email verify
-authRoute.get(
+authRoute.post(
     '/verify-email',
     authControllers.userEmailVerify
 )

@@ -8,9 +8,6 @@ const createQuestionZodSchema = z.object({
     readTime: z.string({
       required_error: 'Question read time is required!'
     }),
-    answerTime: z.string({
-      required_error: 'Question answer time is required!'
-    }),
     options: z.object({
       answer: z.string({
         required_error: 'Correct answer is required!'

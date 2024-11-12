@@ -45,7 +45,8 @@ const userLogin = async (req, res) => {
     email: user.email,
     _id: user._id,
     accessToken,
-    refreshToken
+    refreshToken,
+    isEmailVerified: user.isEmailVerified
   }
 
   sendResponse(res, {

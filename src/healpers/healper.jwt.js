@@ -4,7 +4,7 @@ const createToken = (payload, secret, expireTime) => {
   const token = jwt.sign(payload, secret, {
     expiresIn: expireTime
   })
-  return `Bearer ${token}`
+  return token
 }
 
 const verifyToken = (token, secret) => {

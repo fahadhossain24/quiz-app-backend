@@ -55,12 +55,10 @@ const questionSchema = new mongoose.Schema(
     speciality: {
       type: String,
       required: true,
-      unique: true
     },
     condition: {
       type: String,
       required: true,
-      unique: true
     },
     explanation: String
   },
@@ -74,6 +72,6 @@ questionSchema.pre('save', function (next) {
   next()
 })
 
-const Question = mongoose.model('questioon', questionSchema)
+const Question = mongoose.model('question', questionSchema)
 
 export default Question

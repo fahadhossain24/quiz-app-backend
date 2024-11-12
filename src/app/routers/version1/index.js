@@ -7,12 +7,16 @@ import sponsorRouter from '../../modules/sponsorModule/sponsor.routes.js'
 import privacyPolicyRouter from '../../modules/privacyPolicyModule/privacyPolicy.routes.js'
 import termsConditionRouter from '../../modules/termsConditionModule/termsCondition.routes.js'
 import infoRouter from '../../modules/infoModeModule/info.routes.js'
+import quizRouter from '../../modules/quizModules/quiz/quiz.routes.js'
+import quizSessionRouter from '../../modules/quizModules/quizSession/quizSession.routes.js'
 
 const router = express.Router()
 
 router.use('/user', userRouter)
 router.use('/auth', authRoute)
 router.use('/question', questionRouter)
+router.use('/quiz', quizRouter)
+router.use('/quiz-session', quizSessionRouter)
 router.use('/speciality', specialityRouter)
 router.use('/sponsor', sponsorRouter)
 router.use('/privacy-policy', privacyPolicyRouter)

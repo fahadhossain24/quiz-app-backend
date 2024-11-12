@@ -7,13 +7,22 @@ const createQuestion = async (data) => {
 
 // service for get specific question
 const getSpecificQuestion = async (id) => {
-    console.log(id)
+  // console.log(id)
   return await Question.findOne({ _id: id })
+}
+
+// service for get random 8 question
+const getRandomQuestion = async (number) => {
+  return await Question.aggregate([
+    {
+      $sample: { size: number }
+    }
+  ])
 }
 
 // service to get all question
 const getAllQuestion = async (skip, limit) => {
-    return await Question.find().skip(skip).limit(limit)
+  return await Question.find().skip(skip).limit(limit)
 }
 
 // service for update specific question
@@ -36,6 +45,7 @@ const getQuestionCount = async () => {
 export default {
   createQuestion,
   getSpecificQuestion,
+  getRandomQuestion,
   getAllQuestion,
   updateSpecificQuestion,
   deleteSpecificQuestion,
