@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const leaderboardSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         unique: true
     },
     xp: {

@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import Leaderboard from "./leaderboard.model.js"
 
 // service for get(if found) or create(if not found) leaderboard of a user
@@ -37,10 +38,29 @@ const getLeaderboardByUserId = async(userId) => {
     return await Leaderboard.findOne({userId}).select(['xp', 'rank']);
 }
 
+// service for retrive leaderboards based on period(weekly/monthly)
+const getLeaderboardsByPeriod = async (period) => {
+  let dateFilter = {};
+
+  // Determine the date filter based on the period using Luxon
+  if (period === 'weekly') {
+    dateFilter = { createdAt: { $gte: DateTime.now().startOf('week').toJSDate() } };
+  } else if (period === 'monthly') {
+    dateFilter = { createdAt: { $gte: DateTime.now().startOf('month').toJSDate() } };
+  }
+
+  const leaderboard = await Leaderboard.find(dateFilter)
+    .populate('userId', 'fullName country email image xp rank') 
+    .sort({ xp: -1 }) 
+    .exec();
+
+  return leaderboard;
+};
 
 export default {
     getOrCreateLeaderboardOfAUser,
     updateLeaderboardXPByUser,
     updateLeaderboardRank,
     getLeaderboardByUserId,
+    getLeaderboardsByPeriod,
 }
