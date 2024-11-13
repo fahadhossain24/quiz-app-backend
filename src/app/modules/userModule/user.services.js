@@ -6,6 +6,12 @@ const createUser = async (data) => {
 }
 
 // service for get specific user
+const getUsers = async (filter) => {
+  console.log(filter)
+  return await User.find(filter).select('-password -verification')
+}
+
+// service for get specific user
 const getSpecificUser = async (id) => {
   return await User.findOne({ _id: id }).select('-password')
 }
@@ -29,6 +35,7 @@ const searchOpponent = async (searchCriteria) => {
 
 export default {
   createUser,
+  getUsers,
   getSpecificUser,
   updateSpecificUser,
   deleteSpecificUser,

@@ -12,6 +12,7 @@ import quizSessionRouter from '../../modules/quizModules/quizSession/quizSession
 import matchHistoryRouter from '../../modules/quizModules/matchHistory/matchHistory.routes.js'
 import friendsRouter from '../../modules/friendModule/friend.routes.js'
 import leaderboardRouter from '../../modules/leaderboardModule/leaderboard.routes.js'
+import questionHistoryRouter from '../../modules/questionModules/questionHistory/questionHistory.routes.js'
 
 const router = express.Router()
 
@@ -23,6 +24,7 @@ router.use('/quiz', quizRouter)
 router.use('/quiz-session', quizSessionRouter)
 router.use('/leaderboard', leaderboardRouter)
 router.use('/match-history', matchHistoryRouter)
+router.use('/question-history', questionHistoryRouter)
 router.use('/speciality', specialityRouter)
 router.use('/sponsor', sponsorRouter)
 router.use('/privacy-policy', privacyPolicyRouter)

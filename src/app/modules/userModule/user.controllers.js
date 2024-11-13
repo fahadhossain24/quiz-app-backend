@@ -154,7 +154,7 @@ const findOpponent = async (req, res) => {
     searchCriteria.profession = buildMultiWordRegex(profession)
   }
   searchCriteria.isActive = true
-  console.log(searchCriteria)
+  // console.log(searchCriteria)
 
   // Perform the search query
   const users = await userServices.searchOpponent(searchCriteria)

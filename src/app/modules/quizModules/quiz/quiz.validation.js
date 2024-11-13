@@ -11,6 +11,14 @@ const startQuizZodSchema = z.object({
   })
 })
 
+const startQuizOneVsOneZodSchema = z.object({
+  body: z.object({
+    player: z.string({
+      required_error: 'Player is required!'
+    })
+  })
+})
+
 // const getSpecificUserZodSchema = z.object({
 //   params: z.object({
 //     id: z.string({
@@ -20,7 +28,8 @@ const startQuizZodSchema = z.object({
 // })
 
 const QuizValidationZodSchema = {
-    startQuizZodSchema
+    startQuizZodSchema,
+    startQuizOneVsOneZodSchema
 }
 
 export default QuizValidationZodSchema
