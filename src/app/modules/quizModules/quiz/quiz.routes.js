@@ -5,7 +5,7 @@ import QuizValidationZodSchema from "./quiz.validation.js";
 
 const quizRouter = express.Router();
 
-quizRouter.post('/start-quiz/play-friend', requestValidator(QuizValidationZodSchema.startQuizZodSchema), quizControllers.startQuiz)
-quizRouter.post('/start-quiz/one-vs-one', requestValidator(QuizValidationZodSchema.startQuizOneVsOneZodSchema),  quizControllers.startQuizOneVsOne)
+quizRouter.post('/init-quiz/play-friend', requestValidator(QuizValidationZodSchema.startQuizZodSchema), quizControllers.initQuiz)
+quizRouter.post('/init-quiz/one-vs-one', requestValidator(QuizValidationZodSchema.startQuizOneVsOneZodSchema),  quizControllers.initQuizOneVsOne)
 
 export default quizRouter;

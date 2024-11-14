@@ -1,7 +1,7 @@
 import Quiz from "./quiz.model.js"
 
 // service for start new quiz
-const startQuiz = async(data) => {
+const initQuiz = async(data) => {
     return await Quiz.create(data);
 }
 
@@ -12,6 +12,6 @@ const getQuizById = async(id) => {
 
 
 export default {
-    startQuiz,
+    initQuiz,
     getQuizById,
 }

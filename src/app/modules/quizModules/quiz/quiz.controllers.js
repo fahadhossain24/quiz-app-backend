@@ -6,9 +6,10 @@ import questionServices from '../../questionModules/question/question.services.j
 import userServices from '../../userModule/user.services.js'
 import IdGenerator from '../../../../utils/idGenerator.js'
 import config from '../../../../config/index.js'
+import io from '../../../../server.js'
 
-// controller for start new quiz
-const startQuiz = async (req, res) => {
+// controller for init new quiz
+const initQuiz = async (req, res) => {
   const quizData = req.body
 
   const participantA = await userServices.getSpecificUser(quizData.participantA)
@@ -34,21 +35,27 @@ const startQuiz = async (req, res) => {
     explanation: question.explanation
   }))
 
-  const quiz = await quizServices.startQuiz(quizData)
+  // Initialize and save the quiz in the database
+  const quiz = await quizServices.initQuiz(quizData)
   if (!quiz) {
     throw new CustomError.BadRequestError('Failed to start quiz!')
   }
 
+  // Add participant A to the quiz room and invite participant B
+  io.in(participantA._id).socketsJoin(quizId); // Add Player A to the room
+  io.to(participantB._id).emit('quiz-invitation', { quizId, participantId: participantA._id });
+
+
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     status: 'success',
-    message: 'New quiz start successfull!',
+    message: 'New quiz initialization successfull!',
     data: quiz
   })
 }
 
-// controller for start new quiz 1 vs 1
-const startQuizOneVsOne = async (req, res) => {
+// controller for init new quiz 1 vs 1
+const initQuizOneVsOne = async (req, res) => {
   const quizData = req.body
   // player
 
@@ -82,10 +89,14 @@ const startQuizOneVsOne = async (req, res) => {
     explanation: question.explanation
   }))
 
-  const quiz = await quizServices.startQuiz(quizData)
+  const quiz = await quizServices.initQuiz(quizData)
   if (!quiz) {
     throw new CustomError.BadRequestError('Failed to start quiz!')
   }
+
+  // Add participant A to the quiz room and invite participant B
+  io.in(player._id).socketsJoin(quizId); // Add Player to the room
+  io.to(opponent._id).emit('quiz-invitation', { quizId, participantId: opponent._id });
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
@@ -96,6 +107,6 @@ const startQuizOneVsOne = async (req, res) => {
 }
 
 export default {
-  startQuiz,
-  startQuizOneVsOne
+  initQuiz,
+  initQuizOneVsOne
 }
