@@ -1,12 +1,18 @@
-import io from '../../server'
+const connectedUsers = {}
+const realtimeQuiz = (io) => {
+  // Store connected users by user ID and socket ID
 
-const realtimeQuiz = () => {
   // Set up global socket events
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`)
+    const userId = socket.handshake.query.userId
+    if (userId) {
+      connectedUsers[userId] = socket.id
+    }
+    console.log(connectedUsers)
 
     // Handle Player B accepting the quiz invitation
-    socket.on('accept-quiz', ({ quizId, participantId }) => {
+    socket.on('accept-quiz', ({ quizId, participantId, quiz }) => {
       if (!quizId || !participantId) {
         socket.emit('error', { message: 'Invalid quiz or participant data' })
         return
@@ -18,7 +24,7 @@ const realtimeQuiz = () => {
       const room = io.sockets.adapter.rooms.get(quizId)
       if (room && room.size === 2) {
         // Emit quiz-start to both participants
-        io.to(quizId).emit('quiz-start', { quizId, status: 'ready', message: 'Game is starting!' })
+        io.to(quizId).emit('quiz-start', { quiz, status: 'ready', message: 'Game is starting!' })
       }
     })
 
@@ -51,11 +57,10 @@ const realtimeQuiz = () => {
     // Handle disconnection
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`)
-      // Here you could emit an event to notify other players or handle cleanups
+      delete connectedUsers[userId] // Clean up on disconnect
     })
   })
-
-  return io
 }
 
 export default realtimeQuiz
+export { connectedUsers }

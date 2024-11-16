@@ -6,7 +6,7 @@ import questionServices from '../../questionModules/question/question.services.j
 import userServices from '../../userModule/user.services.js'
 import IdGenerator from '../../../../utils/idGenerator.js'
 import config from '../../../../config/index.js'
-import io from '../../../../server.js'
+import { io, connectedUsers } from '../../../../server.js'
 
 // controller for init new quiz
 const initQuiz = async (req, res) => {
@@ -42,9 +42,18 @@ const initQuiz = async (req, res) => {
   }
 
   // Add participant A to the quiz room and invite participant B
-  io.in(participantA._id).socketsJoin(quizId); // Add Player A to the room
-  io.to(participantB._id).emit('quiz-invitation', { quizId, participantId: participantA._id });
+  // io.in(participantA._id).socketsJoin(quizId) // Add Player A to the room
 
+  const participantASocketId = connectedUsers[participantA._id];
+  if (participantASocketId) {
+    io.in(participantASocketId).socketsJoin(quizId); // Player A joins the room
+  }
+
+  const participantBSocketId = connectedUsers[participantB._id]
+  if (participantBSocketId) {
+    io.to(participantBSocketId).emit('quiz-invitation', { quizId, player: participantA })
+  }
+  // console.log(connectedUsers)
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
@@ -61,7 +70,7 @@ const initQuizOneVsOne = async (req, res) => {
 
   const player = await userServices.getSpecificUser(quizData.player)
 
-  const activeUsers = await userServices.getUsers({isActive: true})
+  const activeUsers = await userServices.getUsers({ isActive: true })
   if (activeUsers.length === 0) {
     throw new CustomError.BadRequestError('No active users available for pairing as opponent!')
   }
@@ -95,8 +104,8 @@ const initQuizOneVsOne = async (req, res) => {
   }
 
   // Add participant A to the quiz room and invite participant B
-  io.in(player._id).socketsJoin(quizId); // Add Player to the room
-  io.to(opponent._id).emit('quiz-invitation', { quizId, participantId: opponent._id });
+  io.in(player._id).socketsJoin(quizId) // Add Player to the room
+  io.to(opponent._id).emit('quiz-invitation', { quizId, participantId: opponent._id })
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
