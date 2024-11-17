@@ -5,8 +5,10 @@ import SponsorValidationZodSchema from "./sponsor.validation.js";
 
 const sponsorRouter = express.Router();
 
-sponsorRouter.post('/splash-screen/create', sponsorControllers.createSplashScreen)
-sponsorRouter.patch('/splash-screen/update/:id', requestValidator(SponsorValidationZodSchema.getSpecificSplashScreenZodSchema), sponsorControllers.updateSplashScreen)
+// splash screen will replaced by sponsor image
+
+sponsorRouter.post('/sponsor-image/create', sponsorControllers.createSplashScreen)
+sponsorRouter.patch('/sponsor-image/update/:id', requestValidator(SponsorValidationZodSchema.getSpecificSplashScreenZodSchema), sponsorControllers.updateSplashScreen)
 sponsorRouter.post('/ads/create', sponsorControllers.createAds)
 sponsorRouter.patch('/ads/update/:id', requestValidator(SponsorValidationZodSchema.getSpecificAdsZodSchema), sponsorControllers.updateAds)
 sponsorRouter.get('/retrive', sponsorControllers.getSponsor)

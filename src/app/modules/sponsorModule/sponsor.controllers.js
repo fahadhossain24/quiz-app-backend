@@ -8,10 +8,10 @@ import sponsorServices from './sponsor.services.js'
 const createSplashScreen = async (req, res) => {
   const data = req.body
 
-  const existingSplashScreen = await sponsorServices.getSpecificSplashScreen()
+  const existingSplashScreen = await sponsorServices.getSponsorImageExistance()
 
   if (existingSplashScreen) {
-    throw new CustomError.BadRequestError('You already have a splash screen!')
+    throw new CustomError.BadRequestError('You already have a sponsor-image!')
   }
 
   if (req.files || req.files?.image) {
@@ -26,7 +26,7 @@ const createSplashScreen = async (req, res) => {
   const splashScreen = await sponsorServices.createSplashScreen(data)
 
   if (!splashScreen) {
-    throw new CustomError.BadRequestError('Failed to create new splash screen!')
+    throw new CustomError.BadRequestError('Failed to create new sponsor image!')
   }
 
   const resPayload = {
@@ -38,7 +38,7 @@ const createSplashScreen = async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
-    message: 'New splash screen added successfull!',
+    message: 'New sponsor image added successfull!',
     data: resPayload
   })
 }
@@ -71,7 +71,7 @@ const updateSplashScreen = async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
-    message: 'Splash screen update successfull!'
+    message: 'Sponsor image update successfull!'
   })
 }
 
@@ -79,7 +79,7 @@ const updateSplashScreen = async (req, res) => {
 const createAds = async (req, res) => {
   const data = req.body
 
-  const existingAds = await sponsorServices.getSpecificAds()
+  const existingAds = await sponsorServices.getAds()
 
   if (existingAds) {
     throw new CustomError.BadRequestError('You already have a ads content!')
