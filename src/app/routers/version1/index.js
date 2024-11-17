@@ -14,6 +14,7 @@ import friendsRouter from '../../modules/friendModule/friend.routes.js'
 import leaderboardRouter from '../../modules/leaderboardModule/leaderboard.routes.js'
 import questionHistoryRouter from '../../modules/questionModules/questionHistory/questionHistory.routes.js'
 import reviewModeRouter from '../../modules/reviewModeModule/reviewMode.routes.js'
+import dashboardRouter from '../../modules/dashboard/dashboard.routes.js'
 
 const router = express.Router()
 
@@ -32,5 +33,6 @@ router.use('/sponsor', sponsorRouter)
 router.use('/privacy-policy', privacyPolicyRouter)
 router.use('/terms-condition', termsConditionRouter)
 router.use('/info', infoRouter)
+router.use('/dashboard', dashboardRouter)
 
 export default router
