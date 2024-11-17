@@ -11,24 +11,26 @@ import sendResponse from '../../../../shared/sendResponse.js'
 import userServices from '../../userModule/user.services.js'
 import matchHistoryServices from '../matchHistory/matchHistory.services.js'
 import friendServices from '../../friendModule/friend.services.js'
+import reviewModeServices from '../../reviewModeModule/reviewMode.services.js'
+import ReviewMode from '../../reviewModeModule/reviewMode.model.js'
 
 // controllers for create quiz session
 const createQuizSession = async (req, res) => {
   const quizSessionData = req.body
 
-  // Fetch the quiz data to identify participants
+  // Fetch the quiz data to identify participants...................
   const quiz = await quizServices.getQuizById(quizSessionData.quizId)
   if (!quiz) {
     throw new CustomError.BadRequestError('No quiz found!')
   }
 
-  // Determine opponent ID based on the current participant
+  // Determine opponent ID based on the current participant...............
   const opponentId = quiz.participantA._id.toString() === quizSessionData.participantId.toString() ? quiz.participantB._id : quiz.participantA._id
 
-  // Create or update the current participant's quiz session
+  // Create current participant's quiz session..................
   const playerQuizSession = await quizSessionServices.createQuizSession(quizSessionData)
 
-  // Attempt to retrieve the opponent's quiz session, if it exists
+  // retrieve the opponent's quiz session, if it exists................
   const opponentQuizSession = await quizSessionServices.getQuizSessionByQuizIdAndOpponentId(quizSessionData.quizId, opponentId)
 
   // If the opponent's session doesn't exist, respond with pending status
@@ -44,6 +46,7 @@ const createQuizSession = async (req, res) => {
   // Determine result for the current player based on scores
   const playerQuizResult = playerQuizSession.score > opponentQuizSession.score ? 'win' : 'loss'
 
+  // calculate xp and update xp on player and udate leaderboard by rank.....................
   // Fetch or create leaderboard entries for both participants
   const playerLeaderboard = await leaderboardServices.getOrCreateLeaderboardOfAUser(playerQuizSession.participantId)
   const opponentLeaderboard = await leaderboardServices.getOrCreateLeaderboardOfAUser(opponentQuizSession.participantId)
@@ -57,6 +60,7 @@ const createQuizSession = async (req, res) => {
   // Update leaderboard ranks asynchronously to avoid blocking response
   leaderboardServices.updateLeaderboardRank()
 
+  // update user/player xp and rank.................
   // retrive user by participantId
   const user = await userServices.getSpecificUser(quizSessionData.participantId)
 
@@ -72,16 +76,52 @@ const createQuizSession = async (req, res) => {
     await user.save()
   }
 
-  // Track match history for the player
+  // Track match history for the player..................
   await matchHistoryServices.updateMatchHistory(quizSessionData.participantId, opponentId, playerQuizResult, playerNewXP)
 
-  // make friend or update existing friend playing time
+  // make friend or update existing friend playing time...............
   await friendServices.updateFriend(quizSessionData.participantId, opponentId, matchDate)
 
+  // transfer failed question into review mode....................
+  const failedQuestions = quizSessionData.failedQuestions.map((failed) => ({
+    _mainId: failed._mainId,
+    questionId: failed.questionId,
+    isCurrect: false,
+    performAnswer: failed.performAnswer,
+    intervalCount: 1,
+    sleep: false,
+  }))
+
+  let reviewMode = await reviewModeServices.getReviewModeByUserId(
+    quizSessionData.participantId
+  );
+
+  if (reviewMode) {
+    failedQuestions.forEach((failedQuestion) => {
+      const exists = reviewMode.questions.some(
+        (q) => q._mainId.toString() === failedQuestion._mainId.toString()
+      );
+
+      if (!exists) {
+        failedQuestion.condition = 'new'
+        reviewMode.questions.push(failedQuestion);
+      }
+    });
+    await reviewMode.save();
+  } else {
+    reviewMode = new ReviewMode({
+      userId: quizSessionData.participantId,
+      questions: failedQuestions,
+    });
+    await reviewMode.save();
+  }
+
+  // transerfer questions into question history.........................
   // Prepare failed questions map to track incorrectly answered questions
   const failedQuestionsMap = new Map(
     quizSessionData.failedQuestions.map((failed) => [String(failed._mainId), { _mainId: failed._mainId, performAnswer: failed.performAnswer }])
   )
+  // console.log("Failed question map", failedQuestionsMap)
 
   // Map through quiz questions and mark correct/incorrect responses
   const questionsOfTheQuiz = quiz.questions.map((question) => {
@@ -93,6 +133,7 @@ const createQuizSession = async (req, res) => {
       performAnswer: failedQuestion ? failedQuestion.performAnswer : null
     }
   })
+  // console.log("Questions of the quiz", questionsOfTheQuiz)
 
   // Save or update question history for the participant
   let questionHistoryByParticipant = await questionHistoryServices.getQuestionHistoryByUser(quizSessionData.participantId)
@@ -120,7 +161,7 @@ const createQuizSession = async (req, res) => {
   return sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
-    message: 'Quiz submission successful!',
+    message: 'Quiz submission successful!', 
     data: {
       result: playerQuizResult,
       xp: playerNewXP
