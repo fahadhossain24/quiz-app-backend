@@ -44,14 +44,15 @@ const initQuiz = async (req, res) => {
   // Add participant A to the quiz room and invite participant B
   // io.in(participantA._id).socketsJoin(quizId) // Add Player A to the room
 
-  const participantASocketId = connectedUsers[participantA._id];
+  const participantASocketId = connectedUsers[participantA._id]
   if (participantASocketId) {
-    io.in(participantASocketId).socketsJoin(quizId); // Player A joins the room
+    io.in(participantASocketId).socketsJoin(quizId) // Player A joins the room
   }
 
   const participantBSocketId = connectedUsers[participantB._id]
   if (participantBSocketId) {
-    io.to(participantBSocketId).emit('quiz-invitation', { quizId, player: participantA, quiz })
+    // console.log(quiz)
+    io.to(participantBSocketId).emit('quiz-invitation', { quizId, quiz })
   }
   // console.log(connectedUsers)
 
@@ -107,15 +108,14 @@ const initQuizOneVsOne = async (req, res) => {
   // io.in(player._id).socketsJoin(quizId) // Add Player to the room
   // io.to(opponent._id).emit('quiz-invitation', { quizId, participantId: opponent._id })
 
-
-  const participantASocketId = connectedUsers[player._id];
+  const participantASocketId = connectedUsers[player._id]
   if (participantASocketId) {
-    io.in(participantASocketId).socketsJoin(quizId); // Player A joins the room
+    io.in(participantASocketId).socketsJoin(quizId) // Player A joins the room
   }
 
   const participantBSocketId = connectedUsers[opponent._id]
   if (participantBSocketId) {
-    io.to(participantBSocketId).emit('quiz-invitation', { quizId, player, quiz })
+    io.to(participantBSocketId).emit('quiz-invitation', { quizId, quiz })
   }
 
   sendResponse(res, {
@@ -130,5 +130,3 @@ export default {
   initQuiz,
   initQuizOneVsOne
 }
-
-
