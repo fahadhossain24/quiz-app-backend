@@ -15,6 +15,7 @@ import leaderboardRouter from '../../modules/leaderboardModule/leaderboard.route
 import questionHistoryRouter from '../../modules/questionModules/questionHistory/questionHistory.routes.js'
 import reviewModeRouter from '../../modules/reviewModeModule/reviewMode.routes.js'
 import dashboardRouter from '../../modules/dashboard/dashboard.routes.js'
+import adminRouter from '../../modules/adminModule/admin.routes.js'
 
 const router = express.Router()
 
@@ -34,5 +35,6 @@ router.use('/privacy-policy', privacyPolicyRouter)
 router.use('/terms-condition', termsConditionRouter)
 router.use('/info', infoRouter)
 router.use('/dashboard', dashboardRouter)
+router.use('/admin', adminRouter)
 
 export default router

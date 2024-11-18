@@ -6,8 +6,6 @@ import userControllers from './user.controllers.js'
 
 const userRouter = express.Router()
 
-// userRouter.use(authorization('admin'))
-
 // create user
 userRouter.post(
   '/create',

@@ -13,6 +13,7 @@ const realtimeQuiz = (io) => {
 
     // Handle Player B accepting the quiz invitation
     socket.on('accept-quiz', ({ quizId, participantId, quiz }) => {
+      // console.log(quizId, participantId, quiz)
       if (!quizId || !participantId) {
         socket.emit('error', { message: 'Invalid quiz or participant data' })
         return
@@ -24,7 +25,7 @@ const realtimeQuiz = (io) => {
       const room = io.sockets.adapter.rooms.get(quizId)
       if (room && room.size === 2) {
         // Emit quiz-start to both participants
-        io.to(quizId).emit('quiz-start', { quiz, status: 'ready', message: 'Game is starting!' })
+        io.to(quizId).emit('quiz-start', { status: 'ready', message: 'Game is starting!' })
       }
     })
 
