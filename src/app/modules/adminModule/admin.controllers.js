@@ -34,15 +34,16 @@ const createAdmin = async (req, res) => {
 // controller for get all admin
 const getAllAdmin = async (req, res) => {
   const admins = await adminServices.getAllAdmin()
-  if (admins.length === 0) {
-    throw new CustomError.BadRequestError('No admin found!')
-  }
+  const adminsAcceptSuperAdmin = admins.filter(admin => admin.role !== 'super-admin')
+  // if (admins.length === 0) {
+  //   throw new CustomError.BadRequestError('No admin found!')
+  // }
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Admin retrive successfull',
-    data: admins
+    data: adminsAcceptSuperAdmin
   })
 }
 

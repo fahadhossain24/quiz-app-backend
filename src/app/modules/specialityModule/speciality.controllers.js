@@ -68,9 +68,9 @@ const createSpeciality = async (req, res) => {
 // controller for get all specialities
 const getAllSeciality = async (req, res) => {
   const specialities = await specialityServices.getAllSpeciality()
-  if (specialities.length === 0) {
-    throw new CustomError.BadRequestError('No specialities found!')
-  }
+  // if (specialities.length === 0) {
+  //   throw new CustomError.BadRequestError('No specialities found!')
+  // }
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,

@@ -28,9 +28,9 @@ const createInfo = async (req, res) => {
 const getAllInfo = async (req, res) => {
   const infoList = await infoServices.getAllInfo();
 
-  if (!infoList.length === 0) {   
-    throw new CustomError.BadRequestError('No info found!');
-  }
+  // if (!infoList.length === 0) {   
+  //   throw new CustomError.BadRequestError('No info found!');
+  // }
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,

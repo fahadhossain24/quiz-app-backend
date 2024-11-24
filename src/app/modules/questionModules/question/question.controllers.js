@@ -41,9 +41,9 @@ const getAllQuestion = async (req, res) => {
   const skip = (page - 1) * limit
   const questions = await questionServices.getAllQuestion(speciality, skip, limit)
 
-  if (questions.length === 0) {
-    throw new CustomError.BadRequestError('No questions ware found!')
-  }
+  // if (questions.length === 0) {
+  //   throw new CustomError.BadRequestError('No questions ware found!')
+  // }
 
   const totalQuestions = await questionServices.getQuestionCount()
   const totalPages = Math.ceil(totalQuestions / limit)
@@ -119,9 +119,9 @@ const searchQuestions = async (req, res) => {
   const skip = (page - 1) * limit
   const questions = await questionServices.getSearchQuestion(query, skip, limit)
 
-  if (questions.length === 0) {
-    throw new CustomError.BadRequestError('No questions ware found!')
-  }
+  // if (questions.length === 0) {
+  //   throw new CustomError.BadRequestError('No questions ware found!')
+  // }
 
   const totalSearchResult = questions.length || 0
   const totalPages = Math.ceil(totalSearchResult / limit)
