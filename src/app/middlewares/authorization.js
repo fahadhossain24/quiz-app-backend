@@ -1,6 +1,6 @@
-import config from "../../config/index"
-import jwtHelpers from "../../healpers/healper.jwt"
-import CustomError from "../errors/index"
+import config from "../../config/index.js"
+import jwtHelpers from "../../healpers/healper.jwt.js"
+import CustomError from "../errors/index.js"
 
 const authorization = (...requiredRoles) => {
   return async (req, res, next) => {
