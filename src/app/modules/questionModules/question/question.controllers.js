@@ -35,6 +35,7 @@ const createQuestion = async (req, res) => {
 const getAllQuestion = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
+  // console.log(page)
 
   // Calculate the starting index for pagination
   const skip = (page - 1) * limit

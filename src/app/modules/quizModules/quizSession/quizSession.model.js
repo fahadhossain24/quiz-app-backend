@@ -7,17 +7,17 @@ const quizSessionSchema = new mongoose.Schema(
       ref: 'quiz'
     },
     participantId: String,
-    score: Number
-    // failedQuestions: [
-    //     {
-    //         _mainId: {
-    //             type: mongoose.Schema.Types.ObjectId,
-    //             ref: 'question'
-    //         },
-    //         questionId: String,
-    //         performAnswer: String,
-    //     }
-    // ],
+    score: Number,
+    failedQuestions: [
+        {
+            _mainId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'question'
+            },
+            questionId: String,
+            performAnswer: String,
+        }
+    ],
   },
   {
     timestamps: true

@@ -6,8 +6,9 @@ const initQuiz = async(data) => {
 }
 
 // service for get specific quiz
-const getQuizById = async(id) => {
-    return await Quiz.findOne({_id: id});
+const getQuizById = async(quizId) => {
+    // console.log(quizId)
+    return await Quiz.findOne({quizId});
 }
 
 

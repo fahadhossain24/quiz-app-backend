@@ -11,11 +11,12 @@ const calculateEloXP = (playerXP, opponentXP, playerResult, kFactor = 32) => {
   
     // Round XP change to nearest integer to avoid decimals
     const roundedXPChange = Math.round(xpChange);
+    // console.log(roundedXPChange)
   
     // Calculate new XP for player
     const newXP = Math.max(playerXP + roundedXPChange, 0); // Ensure XP does not fall below 0
   
-    return newXP;
+    return {newXP, xpChange: roundedXPChange};
   };
   
   export default calculateEloXP;

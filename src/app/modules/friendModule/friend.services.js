@@ -11,8 +11,8 @@ const updateFriend = async (playerId, friendId, playingAt) => {
     })
   } else {
     friend = new Friend({
-      userId: friendId,
-      matches: [
+      userId: playerId,
+      friends: [
         {
           friendId,
           playingAt

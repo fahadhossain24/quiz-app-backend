@@ -9,6 +9,7 @@ reviewModeRouter.post('/question/submit', reviewModeControllers.updateReviewQues
 reviewModeRouter.patch('/settings/intervals/user/:userId', reviewModeControllers.updateUserIntervals)
 reviewModeRouter.patch('/settings/admin/intervals', reviewModeControllers.updateAdminIntervals)
 reviewModeRouter.get('/admin/intervals', reviewModeControllers.getGlobalIntervals)
+reviewModeRouter.get('/user/intervals/:userId', reviewModeControllers.retriveUserIntervals)
 // reviewModeRouter.get('/ge', (req, res) => console.log('hello'))
 
 export default reviewModeRouter

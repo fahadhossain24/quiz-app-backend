@@ -7,6 +7,11 @@ const getReviewModeByUserId = async (userId) => {
   return await ReviewMode.findOne({ userId })
 }
 
+// service for retrive revewMode intervals by userId
+const getReviewModeIntervalsByUserId = async (userId) => {
+  return await ReviewMode.findOne({ userId }).select('intervalSettings')
+}
+
 // service for retrive revewMode questions by userId
 const getReviewModeQuestionsByUserId = async (userId, condition) => {
   // Find the reviewMode document for the user and filter by condition
@@ -63,6 +68,7 @@ const getEffectiveIntervals = async (userId) => {
 
 export default {
   getReviewModeByUserId,
+  getReviewModeIntervalsByUserId,
   getReviewModeQuestionsByUserId,
   wakeQuestionsAfterCertainInterval,
   updateUserIntervals,

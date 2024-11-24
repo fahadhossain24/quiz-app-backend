@@ -3,6 +3,7 @@ import MatchHistory from './matchHistory.model.js'
 // service for update(if created) match history by user
 const updateMatchHistory = async (playerId, opponentId, result, xp) => {
   let matchHistory = await MatchHistory.findOne({ userId: playerId })
+  // console.log(matchHistory)
 
   if (matchHistory) {
     matchHistory.matches.push({

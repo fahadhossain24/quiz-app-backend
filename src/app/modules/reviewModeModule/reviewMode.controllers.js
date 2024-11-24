@@ -156,11 +156,29 @@ const getGlobalIntervals = async (req, res) => {
   })
 }
 
+// controller for retrive user intervals
+const retriveUserIntervals = async(req, res) => {
+  const {userId} = req.params;
+  const userIntervals = await reviewModeServices.getReviewModeIntervalsByUserId(userId);
+  console.log(userIntervals)
+  if(!userIntervals){
+    throw new CustomError.BadRequestError('The user has no review mode!')
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Review mode intervals retrive successfull!',
+    data: userIntervals
+  })
+}
+
 export default {
   getReviewModeQuestionsByCondition,
   addQuestionToReviewModeByUser,
   updateReviewQuestionAfterSubmit,
   updateUserIntervals,
   updateAdminIntervals,
-  getGlobalIntervals
+  getGlobalIntervals,
+  retriveUserIntervals,
 }

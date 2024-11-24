@@ -29,6 +29,10 @@ const realtimeQuiz = (io) => {
       }
     })
 
+    socket.on('reject-quiz', ({ status }) => {
+      io.to(quizId).emit('reject-quiz', { status, message: 'Opponent reject you invitation! keep trying to another opponent.' })
+    })
+
     // Handle Player A joining the room and waiting for the opponent
     socket.on('join-quiz', ({ quizId }) => {
       if (!quizId) {
@@ -46,13 +50,14 @@ const realtimeQuiz = (io) => {
     })
 
     // Real-time score update handling
-    socket.on('update-score', ({ quizId, participantId, score }) => {
+    socket.on('update-score', ({ quizId, participantId, score, state }) => {
       if (!quizId || !participantId || score === undefined) {
         socket.emit('error', { message: 'Incomplete score data' })
         return
       }
+
       // Broadcast the score update to the other participant
-      socket.to(quizId).emit('score-update', { participantId, score })
+      socket.to(quizId).emit('score-update', { participantId, score, state })
     })
 
     // Handle disconnection
