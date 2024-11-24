@@ -21,8 +21,16 @@ const getRandomQuestion = async (number) => {
 }
 
 // service to get all question
-const getAllQuestion = async (skip, limit) => {
-  return await Question.find().skip(skip).limit(limit)
+const getAllQuestion = async (speciality, skip, limit) => {
+  const filter = speciality ? { speciality } : {}
+  return await Question.find(filter).skip(skip).limit(limit)
+}
+
+// service to get search question
+const getSearchQuestion = async (query, skip, limit) => {
+  return await Question.find({ $text: { $search: query } })
+    .skip(skip)
+    .limit(limit)
 }
 
 // service for update specific question
@@ -47,6 +55,7 @@ export default {
   getSpecificQuestion,
   getRandomQuestion,
   getAllQuestion,
+  getSearchQuestion,
   updateSpecificQuestion,
   deleteSpecificQuestion,
   getQuestionCount

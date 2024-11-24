@@ -35,28 +35,28 @@ const createQuestion = async (req, res) => {
 const getAllQuestion = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
-  // console.log(page)
+  const speciality = req.query.speciality
 
   // Calculate the starting index for pagination
   const skip = (page - 1) * limit
-  const questions = await questionServices.getAllQuestion(skip, limit)
+  const questions = await questionServices.getAllQuestion(speciality, skip, limit)
 
   if (questions.length === 0) {
     throw new CustomError.BadRequestError('No questions ware found!')
   }
 
-  const totalQuestions = await questionServices.getQuestionCount();
-  const totalPages = Math.ceil(totalQuestions / limit);
+  const totalQuestions = await questionServices.getQuestionCount()
+  const totalPages = Math.ceil(totalQuestions / limit)
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Questions retrive successfull',
     meta: {
-        totalQuestions,
-        totalPages,
-        currentPage: page,
-        pageSize: limit
+      totalQuestions,
+      totalPages,
+      currentPage: page,
+      pageSize: limit
     },
     data: questions
   })
@@ -80,10 +80,7 @@ const updateSpecificQuestion = async (req, res) => {
   // Shuffle the options
   questionData.options = shuffleQuestionOptions(questionData.options)
 
-  const updatedQuestion = await questionServices.updateSpecificQuestion(
-    id,
-    questionData
-  )
+  const updatedQuestion = await questionServices.updateSpecificQuestion(id, questionData)
 
   if (!updatedQuestion.modifiedCount) {
     throw new CustomError.BadRequestError('Failed to modify the question!')
@@ -112,9 +109,41 @@ const deleteSpecificQuestion = async (req, res) => {
   })
 }
 
+// controller for search question
+const searchQuestions = async (req, res) => {
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 9
+  const {query} = req.query
+
+  // Calculate the starting index for pagination
+  const skip = (page - 1) * limit
+  const questions = await questionServices.getSearchQuestion(query, skip, limit)
+
+  if (questions.length === 0) {
+    throw new CustomError.BadRequestError('No questions ware found!')
+  }
+
+  const totalSearchResult = questions.length || 0
+  const totalPages = Math.ceil(totalSearchResult / limit)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Search perform successfull',
+    meta: {
+      totalSearchResult,
+      totalPages,
+      currentPage: page,
+      pageSize: limit
+    },
+    data: questions
+  })
+}
+
 export default {
   createQuestion,
   getAllQuestion,
+  searchQuestions,
   updateSpecificQuestion,
   deleteSpecificQuestion
 }

@@ -9,6 +9,7 @@ const questionRouter = express.Router();
 
 questionRouter.post('/create', authorization('admin'), requestValidator(QuestionValidationZodSchema.createQuestionZodSchema), questionControllers.createQuestion);
 questionRouter.get('/all', authorization('admin'), questionControllers.getAllQuestion);
+questionRouter.get('/search', authorization('admin'), questionControllers.searchQuestions);
 questionRouter.patch('/update/:id', authorization('admin'), requestValidator(QuestionValidationZodSchema.getSpecificQuestionZodSchema), questionControllers.updateSpecificQuestion)
 questionRouter.delete('/delete/:id', authorization('admin'), requestValidator(QuestionValidationZodSchema.getSpecificQuestionZodSchema), questionControllers.deleteSpecificQuestion)
 

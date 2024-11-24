@@ -54,11 +54,11 @@ const questionSchema = new mongoose.Schema(
     },
     speciality: {
       type: String,
-      required: true,
+      required: true
     },
     condition: {
       type: String,
-      required: true,
+      required: true
     },
     explanation: String
   },
@@ -71,6 +71,21 @@ questionSchema.pre('save', function (next) {
   this.options = shuffleQuestionOptions(this.options)
   next()
 })
+
+questionSchema.index(
+  {
+    question: 'text',
+    speciality: 'text',
+    explanation: 'text'
+  },
+  {
+    weights: {
+      question: 5,
+      speciality: 3,
+      explanation: 1
+    }
+  }
+)
 
 const Question = mongoose.model('question', questionSchema)
 
