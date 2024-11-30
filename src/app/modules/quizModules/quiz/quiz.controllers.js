@@ -72,13 +72,15 @@ const initQuizOneVsOne = async (req, res) => {
   const player = await userServices.getSpecificUser(quizData.player)
 
   const activeUsers = await userServices.getUsers({ isActive: true })
-  if (activeUsers.length === 0) {
+  const otherUserAcceptPlayer = activeUsers.filter(user => user._id.toString() !== player._id.toString())
+  // console.log(otherUserAcceptPlayer)
+  if (otherUserAcceptPlayer.length === 0) {
     throw new CustomError.BadRequestError('No active users available for pairing as opponent!')
   }
 
   // Randomly select opponent from active users
-  const randomIndex = Math.floor(Math.random() * activeUsers.length)
-  const opponent = activeUsers[randomIndex]
+  const randomIndex = Math.floor(Math.random() * otherUserAcceptPlayer.length)
+  const opponent = otherUserAcceptPlayer[randomIndex]
 
   const randomQuestions = await questionServices.getRandomQuestion(Number(config.question_count))
 

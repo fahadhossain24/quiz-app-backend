@@ -51,17 +51,17 @@ const getSponsor = async () => {
 
   return {
     sponsorImage: {
-      image: splashScreen.image,
-      status: splashScreen.status,
-      _id: splashScreen._id,
-      lastUpdate: splashScreen.updatedAt
+      image: splashScreen?.image,
+      status: splashScreen?.status,
+      _id: splashScreen?._id,
+      lastUpdate: splashScreen?.updatedAt
     },
     ads: {
-      content: ads.content,
-      status: ads.status,
-      showing_period: ads.showing_period,
-      _id: ads._id,
-      lastUpdate: ads.updatedAt
+      content: ads?.content,
+      status: ads?.status,
+      showing_period: ads?.showing_period,
+      _id: ads?._id,
+      lastUpdate: ads?.updatedAt
     }
   }
 }
