@@ -25,7 +25,26 @@ const createInfo = async (req, res) => {
 };
 
 // controller for getting all info
+const getSpecificInfo = async (req, res) => {
+
+  const {id} = req.params
+  const info = await infoServices.getSpecificInfo(id);
+
+  if (!info) {   
+    throw new CustomError.BadRequestError('No info found!');
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Info retrieved successfully!',
+    data: info
+  });
+};
+
+// controller for getting all info
 const getAllInfo = async (req, res) => {
+  console.log('hitted')
   const infoList = await infoServices.getAllInfo();
 
   // if (!infoList.length === 0) {   
@@ -89,6 +108,7 @@ const deleteInfo = async (req, res) => {
 
 export default {
   createInfo,
+  getSpecificInfo,
   getAllInfo,
   updateInfo,
   deleteInfo

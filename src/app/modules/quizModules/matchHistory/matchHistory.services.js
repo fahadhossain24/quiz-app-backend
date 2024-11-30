@@ -30,7 +30,7 @@ const updateMatchHistory = async (playerId, opponentId, result, xp) => {
 
 // service for get recent match history by userId
 const recentMatchHistoryByUserId = async(userId) => {
-  return await MatchHistory.findOne({userId}).sort({'matches.date' : -1})
+  return await MatchHistory.findOne({userId}).populate('matches.opponentId', 'country _id userId fullName email university image rank xp').sort({'matches.date' : -1})
 }
 
 export default {

@@ -28,12 +28,14 @@ const getReviewModeQuestionsByCondition = async (req, res) => {
 // controller for add question to review mode for specific user
 const addQuestionToReviewModeByUser = async (req, res) => {
   const questionData = req.body
+  // console.log(questionData)
   const reviewMode = await reviewModeServices.getReviewModeByUserId(questionData.userId)
   if (!reviewMode) {
     throw new CustomError.BadRequestError('Invalid userId. No review mode found with the userId!')
   }
+  
+  const existQuestionOnReviewMode = reviewMode.questions.some((q) => q._mainId?.toString() === questionData.question._mainId)
 
-  const existQuestionOnReviewMode = reviewMode.questions.some((q) => q._mainId.toString(), questionData.question._mainId)
   if (existQuestionOnReviewMode) {
     throw new CustomError.BadRequestError('The question is already exist on review mode!')
   }
@@ -52,9 +54,10 @@ const addQuestionToReviewModeByUser = async (req, res) => {
 // controller for update specific review question after submit
 const updateReviewQuestionAfterSubmit = async (req, res) => {
   const { userId, questionId, isCurrect, performAnswer } = req.body
+
   const reviewMode = await reviewModeServices.getReviewModeByUserId(userId)
   if (!reviewMode) {
-    throw new CustomError.BadRequestError('Invalid userId!')
+    throw new CustomError.BadRequestError('User not found!')
   }
 
   const question = reviewMode.questions.find((q) => q._mainId.toString() === questionId)
@@ -75,19 +78,18 @@ const updateReviewQuestionAfterSubmit = async (req, res) => {
       questionHistoryByTheUser.save() // update question history asyncronusly
       // reviewMode.questions = reviewMode.questions.filter((q) => q._mainId.toString() !== questionId)
     } else {
-      question.nextAvailableDate = new Date(Date.now() + intervals[question.intervalCount - 1] * 24 * 60 * 60 * 1000)
+      question.nextAvailableDate = new Date(Date.now() + intervals.intervalSettings[question.intervalCount - 1] * 24 * 60 * 60 * 1000)
       question.sleep = true
       question.condition = 'due'
     }
   } else {
     // Reset to the first interval
     question.intervalCount = 1
-    question.nextAvailableDate = new Date(Date.now() + intervals[0] * 24 * 60 * 60 * 1000)
+    question.nextAvailableDate = new Date(Date.now() + intervals.intervalSettings[0] * 24 * 60 * 60 * 1000)
     question.sleep = true
     question.performAnswer = performAnswer
     question.condition = 'due'
   }
-
   reviewMode.save() // save reviewMode in asyncronusly
 
   sendResponse(res, {

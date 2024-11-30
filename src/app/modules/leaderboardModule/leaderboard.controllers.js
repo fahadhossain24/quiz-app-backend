@@ -12,10 +12,20 @@ const getLeaderboardsByPeriod = async (req, res) => {
 
   const leaderboard = await leaderboardServices.getLeaderboardsByPeriod(period, skip, limit)
 
+  const totalLeaders = await leaderboardServices.getLeadersCount()
+  const totalPages = Math.ceil(totalLeaders / limit)
+
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
     message: 'Leaderboard retrieved successfull!',
+    meta: {
+      totalLeaders,
+      totalPages,
+      currentPage: page,
+      pageSize: limit
+    },
     data: leaderboard
   })
 }

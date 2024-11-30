@@ -10,6 +10,7 @@ const getQuestionHistoryByUserId = async (userId) => {
   return await QuestionHistory.findOne({ userId }).populate('questions._mainId').exec()
 }
 
+
 export default {
   getQuestionHistoryByUser,
   getQuestionHistoryByUserId

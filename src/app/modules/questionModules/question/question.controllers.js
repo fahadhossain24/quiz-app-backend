@@ -32,6 +32,24 @@ const createQuestion = async (req, res) => {
 }
 
 // controller for get all questions
+const getSpecificQuestion = async (req, res) => {
+  const {id} = req.params
+
+  const question = await questionServices.getSpecificQuestion(id)
+
+  if (!question) {
+    throw new CustomError.BadRequestError('Question not found!')
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Question retrive successfull.',
+    data: question
+  })
+}
+
+// controller for get all questions
 const getAllQuestion = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
@@ -142,6 +160,7 @@ const searchQuestions = async (req, res) => {
 
 export default {
   createQuestion,
+  getSpecificQuestion,
   getAllQuestion,
   searchQuestions,
   updateSpecificQuestion,

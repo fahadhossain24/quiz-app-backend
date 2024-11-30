@@ -49,13 +49,13 @@ const getLeaderboardsByPeriod = async (period, skip, limit) => {
 
   // Determine the date filter based on the period using Luxon
   if (period === 'weekly') {
-    dateFilter = { createdAt: { $gte: DateTime.now().startOf('week').toJSDate() } }
+    dateFilter = { updatedAt: { $gte: DateTime.now().startOf('week').toJSDate() } }
   } else if (period === 'monthly') {
-    dateFilter = { createdAt: { $gte: DateTime.now().startOf('month').toJSDate() } }
+    dateFilter = { updatedAt: { $gte: DateTime.now().startOf('month').toJSDate() } }
   }
 
   const leaderboard = await Leaderboard.find(dateFilter)
-    .populate('userId', 'fullName country email image xp rank')
+    .populate('userId', 'fullName country university email image xp rank')
     .sort({ xp: -1 })
     .skip(Number(skip)) 
     .limit(Number(limit))
@@ -64,10 +64,15 @@ const getLeaderboardsByPeriod = async (period, skip, limit) => {
   return leaderboard
 }
 
+const getLeadersCount = async () => {
+  return (await Leaderboard.find()).length
+}
+
 export default {
   getOrCreateLeaderboardOfAUser,
   updateLeaderboardXPByUser,
   updateLeaderboardRank,
   getLeaderboardByUserId,
-  getLeaderboardsByPeriod
+  getLeaderboardsByPeriod,
+  getLeadersCount
 }

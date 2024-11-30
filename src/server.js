@@ -12,13 +12,31 @@ const port = 5005
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-    origin: '*', // Adjust to your frontend origin in production
+    origin: '*',
     methods: ['GET', 'POST']
   }
 })
 
 // Initialize real-time quiz handling
 realtimeQuiz(io)
+
+// handle uncaught exception error
+process.on('uncaughtException', (error) => {
+  console.log('uncaughtException error', error)
+  process.exit(1)
+})
+
+// handle unhandled rejection
+process.on('unhandledRejection', (reason, promise) => {
+  console.log(`unhandle rejection at ${promise} and reason ${reason}`)
+  if (server) {
+    server.close(() => {
+      process.exit(1)
+    })
+  } else {
+    process.exit(1)
+  }
+})
 
 // schedully update question sleep status (wake up the review-mode questions after 1 hours using node-cron)
 cron.schedule('0 * * * *', async () => {
@@ -34,6 +52,14 @@ const dbConnection = async () => {
     console.log('Server is listening on port', port || config.server_port)
   })
 }
+
+// gracefull shoutdown on SIGTERM
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received.')
+  server.close(() => {
+    console.log('Server closed.')
+  })
+})
 
 dbConnection()
 

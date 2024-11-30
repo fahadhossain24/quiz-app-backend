@@ -5,10 +5,21 @@ const updateFriend = async (playerId, friendId, playingAt) => {
   let friend = await Friend.findOne({ userId: playerId })
 
   if (friend) {
-    friend.friends.push({
-      friendId,
-      playingAt
-    })
+    // friend.friends.push({
+    //   friendId,
+    //   playingAt
+    // })
+
+    const existingFriendIndex = friend.friends.findIndex((f) => f.friendId.toString() === friendId.toString())
+
+    if (existingFriendIndex !== -1) {
+      friend.friends[existingFriendIndex].playingAt = playingAt
+    } else {
+      friend.friends.push({
+        friendId,
+        playingAt
+      })
+    }
   } else {
     friend = new Friend({
       userId: playerId,
@@ -26,11 +37,11 @@ const updateFriend = async (playerId, friendId, playingAt) => {
 }
 
 // service for get friends by userId
-const getFriendsByUserId = async(userId) => {
-    return await Friend.findOne({userId}).populate('friends.friendId').sort({'friends.playingAt' : -1})
+const getFriendsByUserId = async (userId) => {
+  return await Friend.findOne({ userId }).populate('friends.friendId').sort({ 'friends.playingAt': -1 })
 }
 
 export default {
   updateFriend,
-  getFriendsByUserId,
+  getFriendsByUserId
 }

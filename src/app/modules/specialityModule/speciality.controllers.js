@@ -135,7 +135,7 @@ const modifySpeciality = async (req, res) => {
     throw new CustomError.BadRequestError('No speciality found!')
   }
 
-  if (req.files || req.files.image) {
+  if (req.files && req.files.image) {
     const imagePath = await fileUploader(
       req.files,
       `speciality-image-${specialityData.name}`,

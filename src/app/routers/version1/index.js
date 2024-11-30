@@ -16,6 +16,7 @@ import questionHistoryRouter from '../../modules/questionModules/questionHistory
 import reviewModeRouter from '../../modules/reviewModeModule/reviewMode.routes.js'
 import dashboardRouter from '../../modules/dashboard/dashboard.routes.js'
 import adminRouter from '../../modules/adminModule/admin.routes.js'
+import countryRouter from '../../modules/countryModule/country.routes.js'
 
 const router = express.Router()
 
@@ -36,5 +37,6 @@ router.use('/terms-condition', termsConditionRouter)
 router.use('/info', infoRouter)
 router.use('/dashboard', dashboardRouter)
 router.use('/admin', adminRouter)
+router.use('/country', countryRouter)
 
 export default router

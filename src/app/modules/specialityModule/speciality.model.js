@@ -10,31 +10,25 @@ const specialitySchema = new mongoose.Schema(
     condition1: {
         name: {
             type: String,
-            required: true,
         },
         pdf: {
             type: String,
-            required: true,
         }
     },
     condition2: {
         name: {
             type: String,
-            required: true,
         },
         pdf: {
             type: String,
-            required: true,
         }
     },
     condition3: {
         name: {
             type: String,
-            required: true,
         },
         pdf: {
             type: String,
-            required: true,
         }
     },
     status: {
