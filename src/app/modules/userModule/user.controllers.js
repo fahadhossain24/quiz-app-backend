@@ -167,11 +167,48 @@ const findOpponent = async (req, res) => {
   })
 }
 
+// controller for update status (online/offline) of user
+const updateOnlineStatus = async (req, res) => {
+  const { userId, isActive } = req.body
+
+  if(typeof isActive !== 'boolean'){
+    throw new CustomError.BadRequestError("isActive must be a boolean type value!")
+  }
+
+  const user = await userServices.getSpecificUser(userId)
+  if (!user) {
+    throw new CustomError.BadRequestError('No user found!')
+  }
+
+  user.isActive = isActive
+  await user.save()
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Update successfull.'
+  })
+}
+
+// controller for get recent user
+const getRecentUsers = async(req, res) => {
+  const users = await userServices.getRecentUsers();
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Recent users retrive successfull.',
+    data: users
+  })
+}
+
 export default {
   createUser,
   getSpecificUser,
   deleteSpecificUser,
   updateSpecificUser,
   changeUserProfileImage,
-  findOpponent
+  findOpponent,
+  updateOnlineStatus,
+  getRecentUsers
 }

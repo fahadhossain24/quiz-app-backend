@@ -16,6 +16,12 @@ userRouter.post(
 // find opponents
 userRouter.get('/search', userControllers.findOpponent)
 
+// update status (online/offline) of user
+userRouter.patch('/update/online-status', userControllers.updateOnlineStatus)
+
+// get recent users
+userRouter.get('/retrive/recent', userControllers.getRecentUsers)
+
 // get specific user
 userRouter.get('/:id', requestValidator(UserValidationZodSchema.getSpecificUserZodSchema), userControllers.getSpecificUser)
 
