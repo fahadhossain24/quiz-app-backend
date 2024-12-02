@@ -79,7 +79,16 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
-    }
+    },
+    // userPlatform: {
+    //   type: String,
+    //   enum: ['local', 'social'],
+    //   default: 'local'
+    // },
+    // fcmToken: {
+    //   type: String,
+    //   default: null
+    // }
   },
   {
     timestamps: true

@@ -29,8 +29,8 @@ const realtimeQuiz = (io) => {
       }
     })
 
-    socket.on('reject-quiz', ({ status }) => {
-      io.to(quizId).emit('reject-quiz', { status, message: 'Opponent reject you invitation! keep trying to another opponent.' })
+    socket.on('reject-quiz', ({ status, quizId }) => {
+      io.to(quizId).emit('reject-quiz', {quizId, status, message: 'Opponent reject you invitation! keep trying to another opponent.' })
     })
 
     // Handle Player A joining the room and waiting for the opponent

@@ -35,7 +35,7 @@ const getDashboardMetrics = async (req, res) => {
       $sort: { _id: 1 }
     }
   ])
-console.log(userOverview, quizOverview)
+// console.log(userOverview, quizOverview)
   // Format data for the line chart
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 

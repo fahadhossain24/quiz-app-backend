@@ -4,6 +4,6 @@ import authorization from "../../middlewares/authorization.js";
 
 const dashboardRouter = express.Router();
 
-dashboardRouter.get('/metrics/retrive', authorization('admin'), dashboardControllers.getDashboardMetrics)
+dashboardRouter.get('/metrics/retrive', authorization('admin', 'super-admin'), dashboardControllers.getDashboardMetrics)
 
 export default dashboardRouter;

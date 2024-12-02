@@ -8,10 +8,10 @@ const sponsorRouter = express.Router();
 
 // splash screen will replaced by sponsor image
 
-sponsorRouter.post('/sponsor-image/create', authorization('user', 'admin'), sponsorControllers.createSplashScreen)
-sponsorRouter.patch('/sponsor-image/update/:id', authorization('user', 'admin'), requestValidator(SponsorValidationZodSchema.getSpecificSplashScreenZodSchema), sponsorControllers.updateSplashScreen)
-sponsorRouter.post('/ads/create', authorization('user', 'admin'), sponsorControllers.createAds)
-sponsorRouter.patch('/ads/update/:id', authorization('user', 'admin'), requestValidator(SponsorValidationZodSchema.getSpecificAdsZodSchema), sponsorControllers.updateAds)
-sponsorRouter.get('/retrive', authorization('user', 'admin'), sponsorControllers.getSponsor)
+sponsorRouter.post('/sponsor-image/create', authorization('user', 'admin', 'super-admin'), sponsorControllers.createSplashScreen)
+sponsorRouter.patch('/sponsor-image/update/:id', authorization('user', 'admin', 'super-admin'), requestValidator(SponsorValidationZodSchema.getSpecificSplashScreenZodSchema), sponsorControllers.updateSplashScreen)
+sponsorRouter.post('/ads/create', authorization('user', 'admin', 'super-admin'), sponsorControllers.createAds)
+sponsorRouter.patch('/ads/update/:id', authorization('user', 'admin', 'super-admin'), requestValidator(SponsorValidationZodSchema.getSpecificAdsZodSchema), sponsorControllers.updateAds)
+sponsorRouter.get('/retrive', authorization('user', 'admin', 'super-admin'), sponsorControllers.getSponsor)
 
 export default sponsorRouter;

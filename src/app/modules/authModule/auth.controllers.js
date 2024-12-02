@@ -19,8 +19,7 @@ const userLogin = async (req, res) => {
   // check the password is correct
   const isPasswordMatch = await user.comparePassword(password)
 
-  if (!isPasswordMatch)
-    throw new CustomError.BadRequestError('Invalid email or password')
+  if (!isPasswordMatch) throw new CustomError.BadRequestError('Invalid email or password')
 
   // generate token
   const payload = {
@@ -28,17 +27,9 @@ const userLogin = async (req, res) => {
     email: user.email,
     role: user.role
   }
-  const accessToken = jwtHelpers.createToken(
-    payload,
-    config.jwt_access_token_secret,
-    config.jwt_access_token_expiresin
-  )
+  const accessToken = jwtHelpers.createToken(payload, config.jwt_access_token_secret, config.jwt_access_token_expiresin)
 
-  const refreshToken = jwtHelpers.createToken(
-    payload,
-    config.jwt_refresh_token_secret,
-    config.jwt_refresh_token_expiresin
-  )
+  const refreshToken = jwtHelpers.createToken(payload, config.jwt_refresh_token_secret, config.jwt_refresh_token_expiresin)
 
   const userInfo = {
     userId: user.userId,
@@ -56,6 +47,48 @@ const userLogin = async (req, res) => {
     data: userInfo
   })
 }
+
+// // controller for social auth (login/signup)
+// const socialAuth = async (req, res) => {
+//   const { fcmToken } = req.body
+
+//   req.body.userPlatform = 
+
+
+//   if (!userInfo) {
+//     throw new CustomError.BadRequestError('Invalid social login token!')
+//   }
+
+//   const existingUser = await User.findOne({ socialId: userInfo.id, socialProvider })
+//   if (existingUser) {
+//     // Existing user login
+//     sendResponse(res, {
+//       statusCode: StatusCodes.OK,
+//       status: 'success',
+//       message: 'Login successful',
+//       data: existingUser
+//     })
+//   } else {
+//     // New social user sign-up
+//     const newUser = new User({
+//       fullName: userInfo.name,
+//       email: userInfo.email,
+//       socialId: userInfo.id,
+//       socialProvider,
+//       loginMethod,
+//       isEmailVerified: true,
+//       image: userInfo.picture // Assume profile picture URL is provided
+//     })
+
+//     const savedUser = await newUser.save()
+//     sendResponse(res, {
+//       statusCode: StatusCodes.CREATED,
+//       status: 'success',
+//       message: 'User creation successful',
+//       data: savedUser
+//     })
+//   }
+// }
 
 // controller for resend email verification code
 const resendEmailVerificationCode = async (req, res) => {
@@ -109,9 +142,7 @@ const userEmailVerify = async (req, res) => {
 
   const now = new Date()
   if (user.verification.expireDate && user.verification.expireDate < now) {
-    throw new CustomError.BadRequestError(
-      'Sorry, Email verification Code using date expired!'
-    )
+    throw new CustomError.BadRequestError('Sorry, Email verification Code using date expired!')
   }
 
   // update the email verification status of user
@@ -189,7 +220,7 @@ const sendOTP = async (req, res) => {
 
 // controller for verify otp
 const verifyOTP = async (req, res) => {
-  const {email, otp } = req.body
+  const { email, otp } = req.body
   if (!email || !otp) {
     throw new CustomError.BadRequestError('Missing data in request body!')
   }
@@ -268,10 +299,7 @@ const getAccessTokenByRefreshToken = async (req, res) => {
   const { refresh_token } = req.body
   const actualRefreshToken = refresh_token.split(' ')[1]
 
-  const tokenPayload = jwtHelpers.verifyToken(
-    actualRefreshToken,
-    config.jwt_refresh_token_secret
-  )
+  const tokenPayload = jwtHelpers.verifyToken(actualRefreshToken, config.jwt_refresh_token_secret)
   if (!tokenPayload) {
     throw new CustomError.BadRequestError('Invalid refresh token!')
   }
@@ -287,17 +315,12 @@ const getAccessTokenByRefreshToken = async (req, res) => {
     role: user.role
   }
 
-  const newAccessToken = jwtHelpers.createToken(
-    payload,
-    config.jwt_access_token_secret,
-    config.jwt_access_token_expiresin
-  )
+  const newAccessToken = jwtHelpers.createToken(payload, config.jwt_access_token_secret, config.jwt_access_token_expiresin)
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     status: 'success',
-    message:
-      'New access token created using refresh token. User logged In successful',
+    message: 'New access token created using refresh token. User logged In successful',
     data: {
       accessToken: newAccessToken,
       refreshToken: actualRefreshToken
