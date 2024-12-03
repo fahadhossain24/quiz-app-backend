@@ -4,7 +4,7 @@ import Country from './country.model.js'
 import axios from 'axios'
 
 const insertCountry = async (req, res) => {
-  const response = await axios.get('https://restcountries.com/v3.1/all')
+  const response = await axios.get('https://restcountries.com/v3.1/all', { timeout: 10000 })
   const countries = response.data
 
   const countryPromises = countries.map((country) => {
