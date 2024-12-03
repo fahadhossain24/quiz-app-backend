@@ -86,11 +86,12 @@ const updateSpecificAdmin = async (req, res) => {
 // controller for change profile image of specific admin
 const changeAdminProfileImage = async (req, res) => {
   const { id } = req.params
-  const files = req.files
+  // const files = req.files
 
-  const admin = await adminServices.getSpecificAdmin(id)
+  // const admin = await adminServices.getSpecificAdmin(id)
 
-  const adminImagePath = await fileUploader(files, `admin-image-${admin.adminId}`, 'image')
+  // const adminImagePath = await fileUploader(files, `admin-image-${admin.adminId}`, 'image')
+  const adminImagePath = req.files.image[0].location
   const updateAdmin = await adminServices.updateSpecificAdmin(id, {
     image: adminImagePath
   })

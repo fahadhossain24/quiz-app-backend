@@ -7,6 +7,7 @@ import sendResponse from '../../../shared/sendResponse.js'
 // controller for create new speciality
 const createSpeciality = async (req, res) => {
   const specialityData = req.body
+  // console.log(req.body)
   if (req.files || req.files.image) {
     const imagePath = await fileUploader(
       req.files,

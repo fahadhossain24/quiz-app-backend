@@ -2,6 +2,7 @@ import express from 'express'
 import requestValidator from '../../middlewares/requestValidator.js'
 import UserValidationZodSchema from './user.validation.js'
 import userControllers from './user.controllers.js'
+import s3Upload from '../../middlewares/s3FileUploader.js'
 // const authorization = require('../../middlewares/authorization')
 
 const userRouter = express.Router()
@@ -32,6 +33,6 @@ userRouter.delete('/delete/:id', requestValidator(UserValidationZodSchema.getSpe
 userRouter.patch('/update/:id', userControllers.updateSpecificUser)
 
 // change profile image of specific user
-userRouter.patch('/update/profile-picture/:id', userControllers.changeUserProfileImage)
+userRouter.patch('/update/profile-picture/:id', s3Upload('image'), userControllers.changeUserProfileImage)
 
 export default userRouter

@@ -15,11 +15,12 @@ const createSplashScreen = async (req, res) => {
   }
 
   if (req.files || req.files?.image) {
-    const imagePath = await fileUploader(
-      req.files,
-      `splashscreen-image`,
-      'image'
-    )
+    // const imagePath = await fileUploader(
+    //   req.files,
+    //   `splashscreen-image`,
+    //   'image'
+    // )
+    const imagePath = req.files.image[0].location
     data.image = imagePath
   }
 
@@ -54,11 +55,8 @@ const updateSplashScreen = async (req, res) => {
   }
 
   if (req.files || req.files?.image) {
-    const imagePath = await fileUploader(
-      req.files,
-      `splashscreen-image`,
-      'image'
-    )
+    // const imagePath = await fileUploader(req.files, `splashscreen-image`, 'image')
+    const imagePath = req.files.image[0].location
     data.image = imagePath
   }
 
@@ -86,7 +84,8 @@ const createAds = async (req, res) => {
   }
 
   if (req.files || req.files?.content) {
-    const contentPath = await fileUploader(req.files, `ads`, 'content')
+    // const contentPath = await fileUploader(req.files, `ads`, 'content')
+    const contentPath = req.files.content[0].location
     data.content = contentPath
   }
 
@@ -122,7 +121,8 @@ const updateAds = async (req, res) => {
   }
 
   if (req.files || req.files?.content) {
-    const contentPath = await fileUploader(req.files, `ads`, 'content')
+    // const contentPath = await fileUploader(req.files, `ads`, 'content')
+    const contentPath = req.files.content[0].location
     data.content = contentPath
   }
 

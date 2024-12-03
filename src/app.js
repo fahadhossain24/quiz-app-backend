@@ -34,7 +34,7 @@ const limiter = rateLimit({
 app.use(morgan('dev'))
 // app.use(limiter)
 
-// app.post('/v1/upload/multiple', s3Upload('file', true), (req, res) => {
+// app.post('/v1/upload/multiple', s3Upload('file', false), (req, res) => {
 //   console.log("Request body:", req.body); // Debugging log
 //   console.log("Request files:", req.files); // Debugging log
 

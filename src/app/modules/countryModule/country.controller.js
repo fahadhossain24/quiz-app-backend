@@ -26,6 +26,8 @@ const insertCountry = async (req, res) => {
   })
 }
 
+
+
 const getCountries = async (req, res) => {
   const countries = await Country.find().select('-_id -__v')
 
