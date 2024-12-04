@@ -11,6 +11,7 @@ reviewModeRouter.patch('/settings/intervals/user/:userId', authorization('user')
 reviewModeRouter.patch('/settings/admin/intervals', authorization('admin', 'super-admin'), reviewModeControllers.updateAdminIntervals)
 reviewModeRouter.get('/admin/intervals', authorization('user', 'admin', 'super-admin'), reviewModeControllers.getGlobalIntervals)
 reviewModeRouter.get('/user/intervals/:userId', authorization('user', 'admin', 'super-admin'), reviewModeControllers.retriveUserIntervals)
+reviewModeRouter.delete('/user/remove-question', authorization('user', 'admin', 'super-admin'), reviewModeControllers.deleteReviewModeQuestionByUserId)
 // reviewModeRouter.get('/ge', (req, res) => console.log('hello'))
 
 export default reviewModeRouter

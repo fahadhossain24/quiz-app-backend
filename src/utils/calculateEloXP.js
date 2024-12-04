@@ -18,6 +18,31 @@ const calculateEloXP = (playerXP, opponentXP, playerResult, kFactor = 32) => {
   
     return {newXP, xpChange: roundedXPChange};
   };
+
+
+  // const calculateEloXP = (playerXP, opponentXP, playerResult, kFactor = 32) => {
+  //   // Calculate expected score based on current XP ratings
+  //   const expectedPlayer = 1 / (1 + Math.pow(10, (opponentXP - playerXP) / 400));
+    
+  //   // Determine actual score based on result (1 if win, 0 if loss)
+  //   const actualScore = playerResult === 'win' ? 1 : 0;
+    
+  //   // Calculate raw XP change
+  //   const xpChange = kFactor * (actualScore - expectedPlayer);
+    
+  //   // Round XP change to nearest integer
+  //   const roundedXPChange = Math.round(xpChange);
+  
+  //   // Apply minimum XP adjustment (1 for win, -1 for loss)
+  //   const adjustedXPChange = playerResult === 'win' 
+  //     ? Math.max(roundedXPChange, 1) 
+  //     : Math.min(roundedXPChange, -1);
+  
+  //   // Calculate new XP for player
+  //   const newXP = Math.max(playerXP + adjustedXPChange, 0); // Ensure XP does not fall below 0
+  
+  //   return { newXP, xpChange: adjustedXPChange };
+  // };
   
   export default calculateEloXP;
   

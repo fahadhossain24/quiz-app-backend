@@ -11,15 +11,21 @@ import userServices from '../userModule/user.services.js'
 
 // controller for user login
 const userLogin = async (req, res) => {
-  const { email, password } = req.body
+  const { email, password, isSocial, fcmToken } = req.body
   const user = await authServices.getUserByEmail(email)
 
   if (!user) throw new CustomError.BadRequestError('Invalid email or password!')
 
-  // check the password is correct
-  const isPasswordMatch = await user.comparePassword(password)
+  if (!isSocial) {
+    if (user.fcmToken !== fcmToken) {
+      throw new CustomError.BadRequestError('Invalid creadentials')
+    }
+  } else {
+    // check the password is correct
+    const isPasswordMatch = await user.comparePassword(password)
 
-  if (!isPasswordMatch) throw new CustomError.BadRequestError('Invalid email or password')
+    if (!isPasswordMatch) throw new CustomError.BadRequestError('Invalid email or password')
+  }
 
   // generate token
   const payload = {
@@ -52,8 +58,7 @@ const userLogin = async (req, res) => {
 // const socialAuth = async (req, res) => {
 //   const { fcmToken } = req.body
 
-//   req.body.userPlatform = 
-
+//   req.body.userPlatform =
 
 //   if (!userInfo) {
 //     throw new CustomError.BadRequestError('Invalid social login token!')

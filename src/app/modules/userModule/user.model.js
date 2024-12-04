@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       minlength: [8, 'Password must be at least 8 characters'],
       required: [true, 'Password is required!']
     },
+    isSocial: Boolean,
+    fcmToken: {
+      type: String,
+      default: null
+    },
     country: {
         common: {
           type: String,

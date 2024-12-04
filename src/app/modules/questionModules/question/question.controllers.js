@@ -53,11 +53,11 @@ const getSpecificQuestion = async (req, res) => {
 const getAllQuestion = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
-  const speciality = req.query.speciality
+  const {query} = req.query
 
   // Calculate the starting index for pagination
   const skip = (page - 1) * limit
-  const questions = await questionServices.getAllQuestion(speciality, skip, limit)
+  const questions = await questionServices.getAllQuestion(query, skip, limit)
 
   // if (questions.length === 0) {
   //   throw new CustomError.BadRequestError('No questions ware found!')

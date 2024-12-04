@@ -21,10 +21,25 @@ const getRandomQuestion = async (number) => {
 }
 
 // service to get all question
-const getAllQuestion = async (speciality, skip, limit) => {
-  const filter = speciality ? { speciality } : {}
-  return await Question.find(filter).skip(skip).limit(limit)
-}
+// const getAllQuestion = async (speciality, skip, limit) => {
+//   const filter = speciality ? { speciality } : {}
+//   return await Question.find(filter).skip(skip).limit(limit)
+// }
+
+// service to get all question
+const getAllQuestion = async (query, skip, limit) => {
+  let filter = {};
+
+  // If a search query is provided, perform a text search
+  if (query) {
+    filter = { $text: { $search: query } };
+  }
+
+  return await Question.find(filter)
+    .skip(skip)
+    .limit(limit);
+};
+
 
 // service to get search question
 const getSearchQuestion = async (query, skip, limit) => {

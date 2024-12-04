@@ -20,7 +20,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-// app.use(fileUpload())
+app.use(fileUpload())
 app.use('/v1/uploads', express.static(path.join('uploads')))
 
 const limiter = rateLimit({

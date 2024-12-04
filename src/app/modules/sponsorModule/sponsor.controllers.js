@@ -3,6 +3,7 @@ import sendResponse from '../../../shared/sendResponse.js'
 import fileUploader from '../../../utils/fileUploader.js'
 import CustomError from '../../errors/index.js'
 import sponsorServices from './sponsor.services.js'
+import AdAndSponsorImpression from './adAandSponsorViewModel.js'
 
 // controller for make new splash screen
 const createSplashScreen = async (req, res) => {
@@ -15,15 +16,11 @@ const createSplashScreen = async (req, res) => {
   }
 
   if (req.files || req.files?.image) {
-    // const imagePath = await fileUploader(
-    //   req.files,
-    //   `splashscreen-image`,
-    //   'image'
-    // )
-    const imagePath = req.files.image[0].location
+    const imagePath = await fileUploader(req.files, `splashscreen-image`, 'image')
+    // const imagePath = req.files?.image[0].location
     data.image = imagePath
   }
-
+  console.log(data)
   const splashScreen = await sponsorServices.createSplashScreen(data)
 
   if (!splashScreen) {
@@ -55,8 +52,8 @@ const updateSplashScreen = async (req, res) => {
   }
 
   if (req.files || req.files?.image) {
-    // const imagePath = await fileUploader(req.files, `splashscreen-image`, 'image')
-    const imagePath = req.files.image[0].location
+    const imagePath = await fileUploader(req.files, `splashscreen-image`, 'image')
+    // const imagePath = req.files.image[0].location
     data.image = imagePath
   }
 
@@ -84,8 +81,8 @@ const createAds = async (req, res) => {
   }
 
   if (req.files || req.files?.content) {
-    // const contentPath = await fileUploader(req.files, `ads`, 'content')
-    const contentPath = req.files.content[0].location
+    const contentPath = await fileUploader(req.files, `ads`, 'content')
+    // const contentPath = req.files?.content[0].location
     data.content = contentPath
   }
 
@@ -121,8 +118,8 @@ const updateAds = async (req, res) => {
   }
 
   if (req.files || req.files?.content) {
-    // const contentPath = await fileUploader(req.files, `ads`, 'content')
-    const contentPath = req.files.content[0].location
+    const contentPath = await fileUploader(req.files, `ads`, 'content')
+    // const contentPath = req.files?.content[0].location
     data.content = contentPath
   }
 
@@ -154,10 +151,74 @@ const getSponsor = async (req, res) => {
   })
 }
 
+// controller for get full sponsor
+const getSponsorByAppUser = async (req, res) => {
+  const { userId } = req.params
+  const sponsor = await sponsorServices.getSponsorByAppUser()
+  if (!sponsor) {
+    throw new CustomError.BadRequestError('Sponsor not found!')
+  }
+
+  const sponsorId = sponsor._id
+  const existingSponsorView = await AdAndSponsorImpression.findOne({ userId, sponsorId })
+  
+  if (!existingSponsorView) {
+    const newSponsorImpressionPayload = {
+      userId,
+      sponsorId
+    }
+    await AdAndSponsorImpression.create(newSponsorImpressionPayload)
+    if (sponsor) {
+      sponsor.impressionCount += 1
+      await sponsor.save()
+    }
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'sponsor retrive successfull!',
+    data: sponsor
+  })
+}
+
+// controller for get full sponsor
+const getAdsByAppUser = async (req, res) => {
+  const { userId } = req.params
+  const ad = await sponsorServices.getAdByAppUser()
+  if (!ad) {
+    throw new CustomError.BadRequestError('Ad not found!')
+  }
+
+  const adId = ad._id
+  const existingAdView = await AdAndSponsorImpression.findOne({ userId, adId })
+
+  if (!existingAdView) {
+    const newAdImpressionPayload = {
+      userId,
+      adId
+    }
+    await AdAndSponsorImpression.create(newAdImpressionPayload)
+    if (ad) {
+      ad.impressionCount += 1
+      await ad.save()
+    }
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'ad retrive successfull!',
+    data: ad
+  })
+}
+
 export default {
   createSplashScreen,
   updateSplashScreen,
   createAds,
   updateAds,
-  getSponsor
+  getSponsor,
+  getSponsorByAppUser,
+  getAdsByAppUser
 }

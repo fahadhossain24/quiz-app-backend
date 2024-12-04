@@ -7,7 +7,11 @@ const adsSchema = new mongoose.Schema(
       type: Boolean,
       default: true
     },
-    showing_period: String
+    showing_period: String,
+    impressionCount: {
+      type: Number,
+      default: 0
+    }
   },
   {
     timestamps: true

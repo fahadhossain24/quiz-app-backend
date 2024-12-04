@@ -6,6 +6,10 @@ const splashScreenSchema = new mongoose.Schema(
     status: {
       type: Boolean,
       default: true
+    },
+    impressionCount: {
+      type: Number,
+      default: 0
     }
   },
   {

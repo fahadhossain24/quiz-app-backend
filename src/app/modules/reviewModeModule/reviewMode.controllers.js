@@ -3,6 +3,7 @@ import sendResponse from '../../../shared/sendResponse.js'
 import reviewModeServices from './reviewMode.services.js'
 import CustomError from '../../errors/index.js'
 import questionHistoryServices from '../questionModules/questionHistory/questionHistory.services.js'
+import ReviewMode from './reviewMode.model.js'
 
 // controllers for retrive review mode questions based on condition (new/due)
 const getReviewModeQuestionsByCondition = async (req, res) => {
@@ -33,7 +34,7 @@ const addQuestionToReviewModeByUser = async (req, res) => {
   if (!reviewMode) {
     throw new CustomError.BadRequestError('Invalid userId. No review mode found with the userId!')
   }
-  
+
   const existQuestionOnReviewMode = reviewMode.questions.some((q) => q._mainId?.toString() === questionData.question._mainId)
 
   if (existQuestionOnReviewMode) {
@@ -159,11 +160,11 @@ const getGlobalIntervals = async (req, res) => {
 }
 
 // controller for retrive user intervals
-const retriveUserIntervals = async(req, res) => {
-  const {userId} = req.params;
-  const userIntervals = await reviewModeServices.getReviewModeIntervalsByUserId(userId);
+const retriveUserIntervals = async (req, res) => {
+  const { userId } = req.params
+  const userIntervals = await reviewModeServices.getReviewModeIntervalsByUserId(userId)
   console.log(userIntervals)
-  if(!userIntervals){
+  if (!userIntervals) {
     throw new CustomError.BadRequestError('The user has no review mode!')
   }
 
@@ -175,6 +176,23 @@ const retriveUserIntervals = async(req, res) => {
   })
 }
 
+// controller for delete review mode question
+const deleteReviewModeQuestionByUserId = async (req, res) => {
+  const {userId, _mainId} = req.body
+  const updatedReviewMode = await ReviewMode.findOneAndUpdate({ userId }, { $pull: { questions: { _mainId } } }, { new: true })
+  console.log(updatedReviewMode)
+
+  if (!updatedReviewMode) {
+    throw new CustomError.BadRequestError('Review mode not found for this user!')
+  }
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Question delete successfull!'
+  })
+}
+
 export default {
   getReviewModeQuestionsByCondition,
   addQuestionToReviewModeByUser,
@@ -183,4 +201,5 @@ export default {
   updateAdminIntervals,
   getGlobalIntervals,
   retriveUserIntervals,
+  deleteReviewModeQuestionByUserId
 }

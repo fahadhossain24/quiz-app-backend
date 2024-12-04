@@ -29,8 +29,29 @@ const realtimeQuiz = (io) => {
       }
     })
 
+    // socket.on('reject-quiz', ({ status, quizId }) => {
+    //   io.to(quizId).emit('reject-quiz', {quizId, status, message: 'Opponent reject you invitation! keep trying to another opponent.' })
+    // })
+
     socket.on('reject-quiz', ({ status, quizId }) => {
-      io.to(quizId).emit('reject-quiz', {quizId, status, message: 'Opponent reject you invitation! keep trying to another opponent.' })
+      // Notify both participants about rejection
+      io.to(quizId).emit('reject-quiz', {
+        quizId,
+        status,
+        message: 'Opponent rejected your invitation! Keep trying with another opponent.'
+      })
+
+      // Close the room by leaving and cleaning up
+      io.sockets.adapter.rooms.delete(quizId)  // Delete the room from the adapter
+      io.sockets.emit('room-closed', { quizId, message: 'Room closed due to rejection' })  // Optionally notify about room closure
+
+      // Remove users from the room
+      const room = io.sockets.adapter.rooms.get(quizId)
+      if (room) {
+        room.forEach(socketId => {
+          io.sockets.sockets.get(socketId).leave(quizId) // Disconnect all users from the room
+        })
+      }
     })
 
     // Handle Player A joining the room and waiting for the opponent

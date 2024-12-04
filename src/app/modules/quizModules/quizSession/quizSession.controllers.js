@@ -78,43 +78,46 @@ const createQuizSession = async (req, res) => {
     Number(config.xp_calculation_kfactor)
   )
   // console.log(playerNewXP, opponentNewXP)
-
-  // ........................................Update leaderboard with new XP for player........................................
-  await leaderboardServices.updateLeaderboardXPByUser(quizSessionData.participantId, playerNewXP)
-  await leaderboardServices.updateLeaderboardXPByUser(opponentQuizSession.participantId, opponentNewXP)
-
-  // Update leaderboard ranks asynchronously to avoid blocking response
-  leaderboardServices.updateLeaderboardRank()
-
-  // ..........................................update user(player/opponent) xp and rank........................................
-  // player
-  const user = await userServices.getSpecificUser(quizSessionData.participantId)
-
-  // retrive leaderboard by perticipantId
-  const leaderboardByUser = await leaderboardServices.getLeaderboardByUserId(quizSessionData.participantId)
   const matchDate = new Date()
-
-  // udpate user by her xp and rank
-  if (user) {
-    user.xp = leaderboardByUser.xp
-    user.rank = leaderboardByUser.rank
-    user.date = matchDate
-    await user.save()
-  }
-
-  // opponent
-  const opponent = await userServices.getSpecificUser(opponentQuizSession.participantId)
-
-  // retrive leaderboard by opponentId
-  const leaderboardByOpponent = await leaderboardServices.getLeaderboardByUserId(opponentQuizSession.participantId)
   const opponentMatchDate = new Date()
 
-  // udpate opponent by her xp and rank
-  if (opponent) {
-    opponent.xp = leaderboardByOpponent.xp
-    opponent.rank = leaderboardByOpponent.rank
-    opponent.date = opponentMatchDate
-    await opponent.save()
+  // only make effect on xp and leaderboard for oneVsOne game
+  if (quizSessionData.isOneVsOne) {
+    // ........................................Update leaderboard with new XP for player........................................
+    await leaderboardServices.updateLeaderboardXPByUser(quizSessionData.participantId, playerNewXP)
+    await leaderboardServices.updateLeaderboardXPByUser(opponentQuizSession.participantId, opponentNewXP)
+
+    // Update leaderboard ranks asynchronously to avoid blocking response
+    leaderboardServices.updateLeaderboardRank()
+
+    // ..........................................update user(player/opponent) xp and rank........................................
+    // player
+    const user = await userServices.getSpecificUser(quizSessionData.participantId)
+
+    // retrive leaderboard by perticipantId
+    const leaderboardByUser = await leaderboardServices.getLeaderboardByUserId(quizSessionData.participantId)
+
+    // udpate user by her xp and rank
+    if (user) {
+      user.xp = leaderboardByUser.xp
+      user.rank = leaderboardByUser.rank
+      user.date = matchDate
+      await user.save()
+    }
+
+    // opponent
+    const opponent = await userServices.getSpecificUser(opponentQuizSession.participantId)
+
+    // retrive leaderboard by opponentId
+    const leaderboardByOpponent = await leaderboardServices.getLeaderboardByUserId(opponentQuizSession.participantId)
+
+    // udpate opponent by her xp and rank
+    if (opponent) {
+      opponent.xp = leaderboardByOpponent.xp
+      opponent.rank = leaderboardByOpponent.rank
+      opponent.date = opponentMatchDate
+      await opponent.save()
+    }
   }
 
   // ..................................Track match history for the player..........................

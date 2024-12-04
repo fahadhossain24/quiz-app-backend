@@ -5,6 +5,6 @@ import countryController from "./country.controller.js";
 const countryRouter = express.Router()
 
 countryRouter.post('/insert', countryController.insertCountry)
-countryRouter.get('/retrive', countryController.getCountries)
+countryRouter.post('/insert', countryController.insertCountry)
 
 export default countryRouter

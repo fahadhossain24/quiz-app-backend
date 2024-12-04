@@ -6,7 +6,7 @@ const countrySchema = new mongoose.Schema({
     required: true
   },
   shortName: String,
-  flagUrl: String
+  flagUrl: String,
 })
 
 const Country = mongoose.model('country', countrySchema)

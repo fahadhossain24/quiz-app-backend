@@ -13,7 +13,7 @@ const getSponsorImageExistance = async () => {
 
 // service to get specific splash screen
 const getSpecificSplashScreen = async (id) => {
-  return await SplashScreen.findOne({_id: id})
+  return await SplashScreen.findOne({ _id: id })
 }
 
 // service to update splash screen
@@ -35,7 +35,7 @@ const getAds = async () => {
 
 // service to get specific ads
 const getSpecificAds = async (id) => {
-  return await Ads.findOne({_id: id})
+  return await Ads.findOne({ _id: id })
 }
 
 // service to update ads
@@ -66,6 +66,16 @@ const getSponsor = async () => {
   }
 }
 
+const getSponsorByAppUser = async () => {
+  const splashScreen = await SplashScreen.findOne({})
+  return splashScreen
+}
+
+const getAdByAppUser = async () => {
+  const ads = await Ads.findOne({})
+  return ads
+}
+
 export default {
   createSplashScreen,
   getSponsorImageExistance,
@@ -76,4 +86,6 @@ export default {
   getSpecificAds,
   updateAds,
   getSponsor,
+  getSponsorByAppUser,
+  getAdByAppUser
 }

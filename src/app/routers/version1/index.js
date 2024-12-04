@@ -17,6 +17,7 @@ import reviewModeRouter from '../../modules/reviewModeModule/reviewMode.routes.j
 import dashboardRouter from '../../modules/dashboard/dashboard.routes.js'
 import adminRouter from '../../modules/adminModule/admin.routes.js'
 import countryRouter from '../../modules/countryModule/country.routes.js'
+import universityRouter from '../../modules/countryModule/university.routes.js'
 
 const router = express.Router()
 
@@ -38,5 +39,6 @@ router.use('/info', infoRouter)
 router.use('/dashboard', dashboardRouter)
 router.use('/admin', adminRouter)
 router.use('/country', countryRouter)
+router.use('/university', universityRouter)
 
 export default router
