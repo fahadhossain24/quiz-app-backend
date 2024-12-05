@@ -106,15 +106,15 @@ const updateSpecificUser = async (req, res) => {
 // controller for change profile image of specific user
 const changeUserProfileImage = async (req, res) => {
   const { id } = req.params
-  // const files = req.files
-
-  // const user = await userServices.getSpecificUser(id)
+  const files = req.files
+// console.log(files)
+  const user = await userServices.getSpecificUser(id)
 // console.log(req.files)
-  const fileUrl = req.files.image[0].location
+  // const fileUrl = req.files.image[0].location
 
-  // const userImagePath = await fileUploader(files, `user-image-${user.userId}`, 'image')
+  const userImagePath = await fileUploader(files, `user-image-${user.userId}`, 'image')
   const updateUser = await userServices.updateSpecificUser(id, {
-    image: fileUrl
+    image: userImagePath
   })
 
   if (!updateUser.modifiedCount) {

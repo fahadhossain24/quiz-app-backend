@@ -7,7 +7,7 @@ export function shuffleQuestionOptions(options) {
     options.optionD,
     options.optionE
   ]
-  console.log(allOptions)
+  // console.log(allOptions)
 
   allOptions.push(options.answer)
 
