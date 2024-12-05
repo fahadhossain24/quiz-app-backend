@@ -14,6 +14,7 @@ import friendServices from '../../friendModule/friend.services.js'
 import reviewModeServices from '../../reviewModeModule/reviewMode.services.js'
 import ReviewMode from '../../reviewModeModule/reviewMode.model.js'
 import { io, connectedUsers } from '../../../../server.js'
+import Leaderboard from '../../leaderboardModule/leaderboard.model.js'
 
 // controllers for create quiz session
 const createQuizSession = async (req, res) => {
@@ -65,17 +66,40 @@ const createQuizSession = async (req, res) => {
   // console.log(playerLeaderboard, opponentLeaderboard)
 
   // ........................................Calculate new XP using Elo rating system........................................
+  // const { newXP: playerNewXP, xpChange: playerGameXP } = calculateEloXP(
+  //   playerLeaderboard.xp,
+  //   opponentLeaderboard.xp,
+  //   playerQuizResult,
+  //   Number(config.xp_calculation_kfactor)
+  // )
+  const totalPlayers = await Leaderboard.countDocuments()
   const { newXP: playerNewXP, xpChange: playerGameXP } = calculateEloXP(
     playerLeaderboard.xp,
-    opponentLeaderboard.xp,
+    playerLeaderboard.rank,
+    opponentLeaderboard.rank,
+    totalPlayers,
     playerQuizResult,
-    Number(config.xp_calculation_kfactor)
+    Number(config.xp_calculation_kfactor),
+    Number(config.min_xp_adjustment),
+    Number(config.max_xp_adjustment)
   )
+  
+  // opponent
+  // const { newXP: opponentNewXP, xpChange: opponentGameXP } = calculateEloXP(
+  //   opponentLeaderboard.xp,
+  //   playerLeaderboard.xp,
+  //   opponentQuizResult,
+  //   Number(config.xp_calculation_kfactor)
+  // )
   const { newXP: opponentNewXP, xpChange: opponentGameXP } = calculateEloXP(
     opponentLeaderboard.xp,
-    playerLeaderboard.xp,
+    opponentLeaderboard.rank,
+    playerLeaderboard.rank,
+    totalPlayers,
     opponentQuizResult,
-    Number(config.xp_calculation_kfactor)
+    Number(config.xp_calculation_kfactor),
+    Number(config.min_xp_adjustment),
+    Number(config.max_xp_adjustment)
   )
   // console.log(playerNewXP, opponentNewXP)
   const matchDate = new Date()

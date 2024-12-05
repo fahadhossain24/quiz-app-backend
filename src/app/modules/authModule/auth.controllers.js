@@ -16,7 +16,7 @@ const userLogin = async (req, res) => {
 
   if (!user) throw new CustomError.BadRequestError('Invalid email or password!')
 
-  if (!isSocial) {
+  if (isSocial) {
     if (user.fcmToken !== fcmToken) {
       throw new CustomError.BadRequestError('Invalid creadentials')
     }

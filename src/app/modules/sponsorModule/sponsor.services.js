@@ -54,14 +54,16 @@ const getSponsor = async () => {
       image: splashScreen?.image,
       status: splashScreen?.status,
       _id: splashScreen?._id,
-      lastUpdate: splashScreen?.updatedAt
+      lastUpdate: splashScreen?.updatedAt,
+      impressionCount: splashScreen?.impressionCount
     },
     ads: {
       content: ads?.content,
       status: ads?.status,
       showing_period: ads?.showing_period,
       _id: ads?._id,
-      lastUpdate: ads?.updatedAt
+      lastUpdate: ads?.updatedAt,
+      impressionCount: ads?.impressionCount
     }
   }
 }

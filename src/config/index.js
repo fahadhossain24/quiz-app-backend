@@ -16,7 +16,9 @@ const config = {
   gmail_app_user: process.env.GMAIL_APP_USER,
   gmail_app_password: process.env.GMAIL_APP_PASSWORD,
   question_count: process.env.QUESTION_COUNT,
-  xp_calculation_kfactor: process.env.XP_CALCULATION_KFACTOR
+  xp_calculation_kfactor: process.env.XP_CALCULATION_KFACTOR,
+  min_xp_adjustment: process.env.MIN_XP_ADJUSTMENT,
+  max_xp_adjustment: process.env.MAX_XP_ADJUSTMENT
   //   server_base_url: process.env.SERVER_BASE_URL,
   //   admin_dashboard_url: process.env.ADMIN_DASHBOARD_URL,
 }

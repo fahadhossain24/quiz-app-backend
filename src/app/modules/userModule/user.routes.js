@@ -33,6 +33,6 @@ userRouter.delete('/delete/:id', requestValidator(UserValidationZodSchema.getSpe
 userRouter.patch('/update/:id', userControllers.updateSpecificUser)
 
 // change profile image of specific user
-userRouter.patch('/update/profile-picture/:id', s3Upload('image'), userControllers.changeUserProfileImage)
+userRouter.patch('/update/profile-picture/:id', userControllers.changeUserProfileImage)
 
 export default userRouter
