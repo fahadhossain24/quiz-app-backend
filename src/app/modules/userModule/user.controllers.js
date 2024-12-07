@@ -6,6 +6,8 @@ import userServices from './user.services.js'
 import { StatusCodes } from 'http-status-codes'
 import CustomError from '../../errors/index.js'
 import leaderboardServices from '../leaderboardModule/leaderboard.services.js'
+import jwtHelpers from '../../../healpers/healper.jwt.js'
+import config from '../../../config/index.js'
 
 // controller for create new user
 const createUser = async (req, res) => {
@@ -21,6 +23,19 @@ const createUser = async (req, res) => {
     expireDate
   }
 
+  let accessToken, refreshToken
+  if (userData.isSocial) {
+    userData.isEmailVerified = true
+
+    const payload = {
+      userId: userId,
+      email: userData.email,
+      role: 'user'
+    }
+    accessToken = jwtHelpers.createToken(payload, config.jwt_access_token_secret, config.jwt_access_token_expiresin)
+    refreshToken = jwtHelpers.createToken(payload, config.jwt_refresh_token_secret, config.jwt_refresh_token_expiresin)
+  }
+
   const user = await userServices.createUser(userData)
   if (!user) {
     throw new CustomError.BadRequestError('Failed to create new user!')
@@ -28,24 +43,26 @@ const createUser = async (req, res) => {
 
   const { password, ...userInfoAcceptPass } = user.toObject()
 
-  // send email verification mail
-  const content = `Your email veirfication code is ${userData?.verification?.code}`
-  // const verificationLink = `${server_base_url}/v1/auth/verify-email/${user._id}?userCode=${userData.verification.code}`
-  // const content = `Click the following link to verify your email: ${verificationLink}`
-  const mailOptions = {
-    from: 'fahadhossain0503@gmail.com',
-    to: userData.email,
-    subject: 'Quiz App - Email Verification',
-    text: content
-  }
+  if (!userData.isSocial) {
+    // send email verification mail
+    const content = `Your email veirfication code is ${userData?.verification?.code}`
+    // const verificationLink = `${server_base_url}/v1/auth/verify-email/${user._id}?userCode=${userData.verification.code}`
+    // const content = `Click the following link to verify your email: ${verificationLink}`
+    const mailOptions = {
+      from: 'medroyale2@gmail.com',
+      to: userData.email,
+      subject: 'Medroyale - Email Verification',
+      text: content
+    }
 
-  sendMail(mailOptions)
+    sendMail(mailOptions)
+  }
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     status: 'success',
     message: 'User creation successfull',
-    data: userInfoAcceptPass
+    data: { ...userInfoAcceptPass, accessToken, refreshToken }
   })
 }
 
@@ -107,9 +124,9 @@ const updateSpecificUser = async (req, res) => {
 const changeUserProfileImage = async (req, res) => {
   const { id } = req.params
   const files = req.files
-// console.log(files)
+  // console.log(files)
   const user = await userServices.getSpecificUser(id)
-// console.log(req.files)
+  // console.log(req.files)
   // const fileUrl = req.files.image[0].location
 
   const userImagePath = await fileUploader(files, `user-image-${user.userId}`, 'image')
@@ -173,8 +190,8 @@ const findOpponent = async (req, res) => {
 const updateOnlineStatus = async (req, res) => {
   const { userId, isActive } = req.body
 
-  if(typeof isActive !== 'boolean'){
-    throw new CustomError.BadRequestError("isActive must be a boolean type value!")
+  if (typeof isActive !== 'boolean') {
+    throw new CustomError.BadRequestError('isActive must be a boolean type value!')
   }
 
   const user = await userServices.getSpecificUser(userId)
@@ -193,8 +210,8 @@ const updateOnlineStatus = async (req, res) => {
 }
 
 // controller for get recent user
-const getRecentUsers = async(req, res) => {
-  const users = await userServices.getRecentUsers();
+const getRecentUsers = async (req, res) => {
+  const users = await userServices.getRecentUsers()
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,

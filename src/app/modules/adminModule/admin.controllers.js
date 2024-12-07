@@ -199,16 +199,13 @@ const sendOTP = async (req, res) => {
       For security reasons, do not share this OTP with anyone.
       
       Best regards,
-      Quiz Managing Team
-      
-      Need help? Contact our support team at support@quizapp.com.
-      © 2024 Quiz App. All rights reserved.
+      Team Medroyale
       `
 
   const mailOptions = {
-    from: 'fahadhossain0503@gmail.com',
+    from: 'medroyale2@gmail.com',
     to: email,
-    subject: 'Quiz App - Password Reset OTP',
+    subject: 'Medroyale - Password Reset OTP',
     text: textContent
   }
 

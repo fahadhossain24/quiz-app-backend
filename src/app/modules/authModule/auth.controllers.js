@@ -17,9 +17,9 @@ const userLogin = async (req, res) => {
   if (!user) throw new CustomError.BadRequestError('Invalid email or password!')
 
   if (isSocial) {
-    if (user.fcmToken !== fcmToken) {
-      throw new CustomError.BadRequestError('Invalid creadentials')
-    }
+    // if (user.fcmToken !== fcmToken) {
+    //   throw new CustomError.BadRequestError('Invalid creadentials')
+    // }
   } else {
     // check the password is correct
     const isPasswordMatch = await user.comparePassword(password)
@@ -37,13 +37,16 @@ const userLogin = async (req, res) => {
 
   const refreshToken = jwtHelpers.createToken(payload, config.jwt_refresh_token_secret, config.jwt_refresh_token_expiresin)
 
+  user.isActive = true
+  await user.save()
+
   const userInfo = {
     userId: user.userId,
     email: user.email,
     _id: user._id,
     accessToken,
     refreshToken,
-    isEmailVerified: user.isEmailVerified
+    isEmailVerified: isSocial? true : user.isEmailVerified
   }
 
   sendResponse(res, {
@@ -119,9 +122,9 @@ const resendEmailVerificationCode = async (req, res) => {
   // const verificationLink = `${config.server_base_url}/v1/auth/verify-email/${user._id}?userCode=${verification.code}`
   // const content = `Click the following link to verify your email: ${verificationLink}`
   const mailOptions = {
-    from: 'fahadhossain0503@gmail.com',
+    from: 'medroyale2@gmail.com',
     to: email,
-    subject: 'Quiz App - Email Verification',
+    subject: 'Medroyale - Email Verification',
     text: content
   }
 
@@ -201,16 +204,13 @@ const sendOTP = async (req, res) => {
     For security reasons, do not share this OTP with anyone.
     
     Best regards,
-    Quiz Managing Team
-    
-    Need help? Contact our support team at support@quizapp.com.
-    © 2024 Quiz App. All rights reserved.
+    Team Medroyale
     `
 
   const mailOptions = {
-    from: 'fahadhossain0503@gmail.com',
+    from: 'medroyale2@gmail.com',
     to: email,
-    subject: 'Quiz App - Password Reset OTP',
+    subject: 'Medroyale - Password Reset OTP',
     text: textContent
   }
 
