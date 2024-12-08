@@ -31,7 +31,7 @@ import University from './university.model.js'
 // }
 
 const insertCountry = async (req, res) => {
-  const timeoutDuration = 15000; // Timeout duration in milliseconds (15 seconds)
+  const timeoutDuration = 50000; // Timeout duration in milliseconds (15 seconds)
 
   try {
     // Log start of the process
