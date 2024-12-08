@@ -5,30 +5,72 @@ import axios from 'axios'
 import CustomError from '../../errors/index.js'
 import University from './university.model.js'
 
+// const insertCountry = async (req, res) => {
+//   const response = await axios.get('https://restcountries.com/v3.1/all', {
+//     timeout: 15000, // Set timeout to 10 seconds or adjust as needed
+//   })
+//   const countries = response.data
+
+//   const countryPromises = countries.map((country) => {
+//     const payload = {
+//       common: country.name.common,
+//       shortName: country.cioc,
+//       flagUrl: country.flags.png
+//     }
+//     const newCountry = new Country(payload)
+//     return newCountry.save()
+//   })
+
+//   await Promise.all(countryPromises)
+
+//   sendResponse(res, {
+//     statusCode: StatusCodes.OK,
+//     status: 'success',
+//     message: 'Country insert successfull!'
+//   })
+// }
+
 const insertCountry = async (req, res) => {
-  const response = await axios.get('https://restcountries.com/v3.1/all', {
-    timeout: 15000, // Set timeout to 10 seconds or adjust as needed
-  })
-  const countries = response.data
+  try {
+    // Using native fetch API to get the countries
+    const response = await fetch('https://restcountries.com/v3.1/all', {
+      method: 'GET',
+      timeout: 15000, // Set timeout to 15 seconds (fetch doesn't support timeout natively, so we'll need to handle that manually)
+    });
 
-  const countryPromises = countries.map((country) => {
-    const payload = {
-      common: country.name.common,
-      shortName: country.cioc,
-      flagUrl: country.flags.png
+    if (!response.ok) {
+      throw new Error('Failed to fetch countries');
     }
-    const newCountry = new Country(payload)
-    return newCountry.save()
-  })
 
-  await Promise.all(countryPromises)
+    const countries = await response.json();  // Parse the response body as JSON
 
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    status: 'success',
-    message: 'Country insert successfull!'
-  })
-}
+    const countryPromises = countries.map((country) => {
+      const payload = {
+        common: country.name.common,
+        shortName: country.cioc,
+        flagUrl: country.flags.png,
+      };
+      const newCountry = new Country(payload);
+      return newCountry.save();
+    });
+
+    await Promise.all(countryPromises);
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      status: 'success',
+      message: 'Country insert successful!',
+    });
+  } catch (error) {
+    console.error('Error while inserting countries:', error.message);
+    sendResponse(res, {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 'error',
+      message: 'An error occurred while inserting countries.',
+    });
+  }
+};
+
 
 const getCountries = async (req, res) => {
   const countries = await Country.find().select('-_id -__v')
