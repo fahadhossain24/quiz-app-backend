@@ -12,10 +12,45 @@ const getSpecificQuestion = async (id) => {
 }
 
 // service for get random 8 question
+// const getRandomQuestion = async (number) => {
+//   return await Question.aggregate([
+//     {
+//       $sample: { size: number }
+//     }
+//   ])
+// }
 const getRandomQuestion = async (number) => {
   return await Question.aggregate([
     {
+      $addFields: {
+        weight: {
+          $cond: {
+            if: {$eq: ["importanceLevel", 5]}, then: 5,
+            else: {
+              $cond: {
+                if: {$eq: ["importanceLevel", 4]}, then: 4,
+                else: {
+                  $cond: {
+                    if: {$eq: ["importanceLevel", 3]}, then: 3,
+                    else: {
+                      $cond: {
+                        if: {$eq: ["importanceLevel", 2]}, then: 2,
+                        else: 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       $sample: { size: number }
+    },
+    {
+      $sort: {weight: -1}
     }
   ])
 }

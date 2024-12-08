@@ -6,8 +6,11 @@ const createUser = async (data) => {
 }
 
 // service for get specific user
-const getUsers = async (filter) => {
-  return await User.find(filter).select('-password -verification')
+// const getUsers = async (filter) => {
+//   return await User.find(filter).select('-password -verification')
+// }
+const getUsers = async (activeUsersIds) => {
+  return await User.find({_id: {$in: activeUsersIds}}).select('-password -verification')
 }
 // service for get recent user
 const getRecentUsers = async () => {

@@ -3,7 +3,7 @@ import config from './config/index.js'
 import app from './app.js'
 import http from 'http'
 import { Server } from 'socket.io'
-import realtimeQuiz, { connectedUsers } from './app/socket/quiz.socket.js'
+import realtimeQuiz, { connectedUsers, activeAppUsers } from './app/socket/quiz.socket.js'
 import reviewModeServices from './app/modules/reviewModeModule/reviewMode.services.js'
 import cron from 'node-cron'
 
@@ -63,4 +63,4 @@ process.on('SIGTERM', () => {
 
 dbConnection()
 
-export { io, connectedUsers }
+export { io, connectedUsers, activeAppUsers }

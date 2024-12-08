@@ -6,7 +6,7 @@ import questionServices from '../../questionModules/question/question.services.j
 import userServices from '../../userModule/user.services.js'
 import IdGenerator from '../../../../utils/idGenerator.js'
 import config from '../../../../config/index.js'
-import { io, connectedUsers } from '../../../../server.js'
+import { io, connectedUsers, activeAppUsers } from '../../../../server.js'
 
 // controller for init new quiz
 const initQuiz = async (req, res) => {
@@ -71,8 +71,9 @@ const initQuizOneVsOne = async (req, res) => {
 
   const player = await userServices.getSpecificUser(quizData.player)
 
-  const activeUsers = await userServices.getUsers({ isActive: true })
-  const otherUserAcceptPlayer = activeUsers.filter(user => user._id.toString() !== player._id.toString())
+  const activeUsers = await userServices.getUsers(activeAppUsers)
+  // console.log(activeUsers)
+  const otherUserAcceptPlayer = activeUsers.filter((user) => user._id.toString() !== player._id.toString())
   // console.log(otherUserAcceptPlayer)
   if (otherUserAcceptPlayer.length === 0) {
     throw new CustomError.BadRequestError('No active users available for pairing as opponent!')
@@ -81,6 +82,7 @@ const initQuizOneVsOne = async (req, res) => {
   // Randomly select opponent from active users
   const randomIndex = Math.floor(Math.random() * otherUserAcceptPlayer.length)
   const opponent = otherUserAcceptPlayer[randomIndex]
+  // console.log(opponent)
 
   const randomQuestions = await questionServices.getRandomQuestion(Number(config.question_count))
 

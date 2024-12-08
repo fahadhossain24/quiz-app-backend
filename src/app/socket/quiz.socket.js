@@ -1,4 +1,5 @@
 const connectedUsers = {}
+const activeAppUsers = []
 const realtimeQuiz = (io) => {
   // Store connected users by user ID and socket ID
 
@@ -6,10 +7,16 @@ const realtimeQuiz = (io) => {
   io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`)
     const userId = socket.handshake.query.userId
+
     if (userId) {
       connectedUsers[userId] = socket.id
+      if (!activeAppUsers.includes(userId)) {
+        activeAppUsers.push(userId)
+      }
     }
     console.log(connectedUsers)
+    console.log(activeAppUsers)
+    // console.log(activeAppUsers.includes(userId))
 
     // Handle Player B accepting the quiz invitation
     socket.on('accept-quiz', ({ quizId, participantId, quiz }) => {
@@ -42,13 +49,13 @@ const realtimeQuiz = (io) => {
       })
 
       // Close the room by leaving and cleaning up
-      io.sockets.adapter.rooms.delete(quizId)  // Delete the room from the adapter
-      io.sockets.emit('room-closed', { quizId, message: 'Room closed due to rejection' })  // Optionally notify about room closure
+      io.sockets.adapter.rooms.delete(quizId) // Delete the room from the adapter
+      io.sockets.emit('room-closed', { quizId, message: 'Room closed due to rejection' }) // Optionally notify about room closure
 
       // Remove users from the room
       const room = io.sockets.adapter.rooms.get(quizId)
       if (room) {
-        room.forEach(socketId => {
+        room.forEach((socketId) => {
           io.sockets.sockets.get(socketId).leave(quizId) // Disconnect all users from the room
         })
       }
@@ -85,9 +92,18 @@ const realtimeQuiz = (io) => {
     socket.on('disconnect', () => {
       console.log(`User disconnected: ${socket.id}`)
       delete connectedUsers[userId] // Clean up on disconnect
+
+      // Remove user from active users array
+      if (userId && activeAppUsers.includes(userId)) {
+        const index = activeAppUsers.indexOf(userId)
+        if (index !== -1) {
+          activeAppUsers.splice(index, 1)
+        }
+      }
+      // console.log(activeAppUsers)
     })
   })
 }
 
 export default realtimeQuiz
-export { connectedUsers }
+export { connectedUsers, activeAppUsers }
