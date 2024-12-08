@@ -42,7 +42,9 @@ const getCountries = async (req, res) => {
 }
 
 const insertUniversity = async (req, res) => {
-  const response = await axios.get(`http://universities.hipolabs.com/search`)
+  const response = await axios.get(`http://universities.hipolabs.com/search`, {
+    timeout: 15000, // Set timeout to 10 seconds or adjust as needed
+  })
 
   // If no universities are found, handle it
   if (response.data.length === 0) {
