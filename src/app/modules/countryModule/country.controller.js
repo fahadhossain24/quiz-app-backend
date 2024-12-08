@@ -32,10 +32,11 @@ import University from './university.model.js'
 
 const insertCountry = async (req, res) => {
   const timeoutDuration = 15000; // Timeout duration in milliseconds (15 seconds)
-  const BATCH_SIZE = 50; // Process countries in batches of 50
-  
+  const BATCH_SIZE = 10; // Reduce batch size for debugging (process 10 countries at a time)
+
   try {
-    // Fetch the countries
+    console.log('Starting to fetch countries data from API...');
+
     const response = await Promise.race([
       fetch('https://restcountries.com/v3.1/all'),
       new Promise((_, reject) =>
@@ -48,12 +49,17 @@ const insertCountry = async (req, res) => {
     }
 
     const countries = await response.json();
-    console.log(`Received ${countries.length} countries from the API.`);
+    console.log(`Fetched ${countries.length} countries.`);
+
+    // Log memory usage before processing
+    console.log('Memory before processing:', process.memoryUsage());
 
     // Break countries into batches
     const countryPromises = [];
     for (let i = 0; i < countries.length; i += BATCH_SIZE) {
       const batch = countries.slice(i, i + BATCH_SIZE);
+      console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+
       const batchPromises = batch.map((country) => {
         const payload = {
           common: country.name.common,
@@ -63,11 +69,15 @@ const insertCountry = async (req, res) => {
         const newCountry = new Country(payload);
         return newCountry.save();
       });
+
       countryPromises.push(Promise.all(batchPromises)); // Process each batch sequentially
     }
 
     // Wait for all batches to complete
     await Promise.all(countryPromises);
+
+    // Log memory usage after processing
+    console.log('Memory after processing:', process.memoryUsage());
 
     sendResponse(res, {
       statusCode: StatusCodes.OK,
@@ -77,6 +87,7 @@ const insertCountry = async (req, res) => {
   } catch (error) {
     console.error('Error while inserting countries:', error.message);
     console.error('Error Stack:', error.stack); // Log stack trace for better debugging
+    console.error('Memory Usage:', process.memoryUsage()); // Log memory usage at the time of failure
     sendResponse(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       status: 'error',
@@ -84,6 +95,7 @@ const insertCountry = async (req, res) => {
     });
   }
 };
+
 
 
 
