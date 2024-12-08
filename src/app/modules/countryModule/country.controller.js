@@ -31,64 +31,49 @@ import University from './university.model.js'
 // }
 
 const insertCountry = async (req, res) => {
-  const timeoutDuration = 15000; // Timeout duration in milliseconds (15 seconds)
-
+  const timeoutDuration = 15000;
   try {
-    // Create a fetch request with a timeout using Promise.race
-    const response = await Promise.race([
-      fetch('https://restcountries.com/v3.1/all'),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), timeoutDuration)
-      ),
-    ]);
-
-    // Check for unsuccessful responses
+    const response = await fetch('https://restcountries.com/v3.1/all');
     if (!response.ok) {
       throw new Error(`Failed to fetch countries. Status: ${response.status}`);
     }
 
-    const countries = await response.json(); // Parse the response body as JSON
+    const countries = await response.json();
+    console.log('Countries data received:', countries.length);
 
-    // Check the structure of the data
-    console.log('Countries data received:', countries.length);  // Log the number of countries
-
-    const countryPromises = countries.map((country) => {
-      // Check if country data has the expected structure
-      if (!country.name || !country.name.common || !country.cioc || !country.flags || !country.flags.png) {
-        console.warn('Skipping invalid country data:', country);
-        return; // Skip invalid data
-      }
-
-      const payload = {
-        common: country.name.common,
-        shortName: country.cioc,
-        flagUrl: country.flags.png,
-      };
-      const newCountry = new Country(payload);
-      return newCountry.save();
-    }).filter(Boolean); // Remove any undefined values from invalid country data
-
-    if (countryPromises.length === 0) {
-      throw new Error('No valid country data to insert');
+    // Break into smaller batches to avoid overloading the database
+    const BATCH_SIZE = 50;
+    const countryPromises = [];
+    for (let i = 0; i < countries.length; i += BATCH_SIZE) {
+      const batch = countries.slice(i, i + BATCH_SIZE);
+      const batchPromises = batch.map((country) => {
+        const payload = {
+          common: country.name.common,
+          shortName: country.cioc,
+          flagUrl: country.flags.png,
+        };
+        const newCountry = new Country(payload);
+        return newCountry.save();
+      });
+      countryPromises.push(Promise.all(batchPromises)); // Process batches sequentially
     }
 
     await Promise.all(countryPromises);
-
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       status: 'success',
       message: 'Country insert successful!',
     });
   } catch (error) {
-    // Log the error and provide more details
     console.error('Error while inserting countries:', error.message);
     sendResponse(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       status: 'error',
-      message: error.message || 'An error occurred while inserting countries.',
+      message: 'An error occurred while inserting countries.',
     });
   }
 };
+
 
 
 const getCountries = async (req, res) => {
