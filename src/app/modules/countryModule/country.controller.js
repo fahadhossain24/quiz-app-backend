@@ -31,20 +31,34 @@ import University from './university.model.js'
 // }
 
 const insertCountry = async (req, res) => {
-  try {
-    // Using native fetch API to get the countries
-    const response = await fetch('https://restcountries.com/v3.1/all', {
-      method: 'GET',
-      timeout: 15000, // Set timeout to 15 seconds (fetch doesn't support timeout natively, so we'll need to handle that manually)
-    });
+  const timeoutDuration = 15000; // Timeout duration in milliseconds (15 seconds)
 
+  try {
+    // Create a fetch request with a timeout using Promise.race
+    const response = await Promise.race([
+      fetch('https://restcountries.com/v3.1/all'),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), timeoutDuration)
+      ),
+    ]);
+
+    // Check for unsuccessful responses
     if (!response.ok) {
-      throw new Error('Failed to fetch countries');
+      throw new Error(`Failed to fetch countries. Status: ${response.status}`);
     }
 
-    const countries = await response.json();  // Parse the response body as JSON
+    const countries = await response.json(); // Parse the response body as JSON
+
+    // Check the structure of the data
+    console.log('Countries data received:', countries.length);  // Log the number of countries
 
     const countryPromises = countries.map((country) => {
+      // Check if country data has the expected structure
+      if (!country.name || !country.name.common || !country.cioc || !country.flags || !country.flags.png) {
+        console.warn('Skipping invalid country data:', country);
+        return; // Skip invalid data
+      }
+
       const payload = {
         common: country.name.common,
         shortName: country.cioc,
@@ -52,7 +66,11 @@ const insertCountry = async (req, res) => {
       };
       const newCountry = new Country(payload);
       return newCountry.save();
-    });
+    }).filter(Boolean); // Remove any undefined values from invalid country data
+
+    if (countryPromises.length === 0) {
+      throw new Error('No valid country data to insert');
+    }
 
     await Promise.all(countryPromises);
 
@@ -62,11 +80,12 @@ const insertCountry = async (req, res) => {
       message: 'Country insert successful!',
     });
   } catch (error) {
+    // Log the error and provide more details
     console.error('Error while inserting countries:', error.message);
     sendResponse(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       status: 'error',
-      message: 'An error occurred while inserting countries.',
+      message: error.message || 'An error occurred while inserting countries.',
     });
   }
 };
