@@ -6,7 +6,9 @@ import CustomError from '../../errors/index.js'
 import University from './university.model.js'
 
 const insertCountry = async (req, res) => {
-  const response = await axios.get('https://restcountries.com/v3.1/all')
+  const response = await axios.get('https://restcountries.com/v3.1/all', {
+    timeout: 15000, // Set timeout to 10 seconds or adjust as needed
+  })
   const countries = response.data
 
   const countryPromises = countries.map((country) => {
