@@ -6,32 +6,52 @@ import CustomError from '../../errors/index.js'
 import University from './university.model.js'
 
 const insertCountry = async (req, res) => {
-  const response = await axios.get('https://restcountries.com/v3.1/all', {
-    timeout: 20000, // Set timeout to 10 seconds or adjust as needed
-  })
-  const countries = response.data
+  try {
+    // Fetch countries from the World Bank API
+    const response = await axios.get('https://api.worldbank.org/v2/country?format=json')
 
-  const countryPromises = countries.map((country) => {
-    const payload = {
-      common: country.name.common,
-      shortName: country.cioc,
-      flagUrl: country.flags.png
+    // Check if the response is valid
+    if (!response.data || !Array.isArray(response.data[1])) {
+      throw new CustomError.BadRequestError('Failed to retrieve countries data!')
     }
-    const newCountry = new Country(payload)
-    return newCountry.save()
-  })
 
-  await Promise.all(countryPromises)
+    const countries = response.data[1]
 
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    status: 'success',
-    message: 'Country insert successfull!'
-  })
+    // Map over the countries to prepare payload for insertion
+    const countryPromises = countries.map((country) => {
+      const { id, name } = country // Extract country code (id) and name
+
+      // Flag URL mapping (you can use any service to map the country code to a flag image URL)
+      const flagUrl = `https://flagcdn.com/w320/${id.toLowerCase()}.png` // Example flag URL using country code
+
+      const payload = {
+        common: name, // Full country name
+        shortName: id, // Country short name (code)
+        flagUrl: flagUrl // Flag URL
+      }
+
+      const newCountry = new Country(payload)
+      return newCountry.save()
+    })
+
+    // Wait for all country data to be saved in parallel
+    await Promise.all(countryPromises)
+
+    // Send success response
+    sendResponse(res, {
+      statusCode: StatusCodes.CREATED,
+      status: 'success',
+      message: 'Countries added successfully!'
+    })
+  } catch (error) {
+    console.error(error)
+    sendResponse(res, {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: 'error',
+      message: `An error occurred while inserting countries: ${error.message}`
+    })
+  }
 }
-
-
-
 
 const getCountries = async (req, res) => {
   const countries = await Country.find().select('-_id -__v')
@@ -46,7 +66,7 @@ const getCountries = async (req, res) => {
 
 const insertUniversity = async (req, res) => {
   const response = await axios.get(`http://universities.hipolabs.com/search`, {
-    timeout: 15000, // Set timeout to 10 seconds or adjust as needed
+    timeout: 15000 // Set timeout to 10 seconds or adjust as needed
   })
 
   // If no universities are found, handle it
@@ -89,7 +109,7 @@ const searchUniversity = async (req, res) => {
 
   // Case-insensitive partial search for universities by name
   const universities = await University.find({
-    name: { $regex: query, $options: 'i' } 
+    name: { $regex: query, $options: 'i' }
   }).select('-__v')
 
   if (universities.length === 0) {
