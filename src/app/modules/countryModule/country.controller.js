@@ -7,51 +7,76 @@ import University from './university.model.js'
 
 const insertCountry = async (req, res) => {
   try {
-    // Fetch countries from the World Bank API
-    const response = await axios.get('https://api.worldbank.org/v2/country?format=json')
+    let page = 1; // Start with the first page
+    let countries = []; // Array to hold all countries
 
-    // Check if the response is valid
-    if (!response.data || !Array.isArray(response.data[1])) {
-      throw new CustomError.BadRequestError('Failed to retrieve countries data!')
+    // Fetch countries from all pages
+    while (true) {
+      const response = await axios.get(`https://api.worldbank.org/v2/country?page=${page}&format=json`);
+
+      // Check if response contains valid data
+      if (!response.data || !Array.isArray(response.data[1])) {
+        throw new CustomError.BadRequestError('Failed to retrieve countries data!');
+      }
+
+      const currentPageCountries = response.data[1];
+      if (currentPageCountries.length === 0) {
+        break; // Exit loop if no more countries on the current page
+      }
+
+      countries = [...countries, ...currentPageCountries]; // Add current page countries to the list
+      page++; // Increment to fetch the next page
     }
 
-    const countries = response.data[1]
+    // Now insert all countries into the database
+    const countryPromises = countries.map(async (country) => {
+      const { id, name } = country; // Extract country code (id) and name
 
-    // Map over the countries to prepare payload for insertion
-    const countryPromises = countries.map((country) => {
-      const { id, name } = country // Extract country code (id) and name
+      // Check if the country already exists in the database
+      const existingCountry = await Country.findOne({ shortName: id });
+
+      if (existingCountry) {
+        // If country exists, skip saving it
+        console.log(`Country ${name} with code ${id} already exists in the database.`);
+        return null; // Skip this country
+      }
 
       // Flag URL mapping (you can use any service to map the country code to a flag image URL)
-      const flagUrl = `https://flagcdn.com/w320/${id.toLowerCase()}.png` // Example flag URL using country code
+      const flagUrl = `https://flagcdn.com/w320/${id.toLowerCase()}.png`; // Example flag URL using country code
 
       const payload = {
         common: name, // Full country name
         shortName: id, // Country short name (code)
         flagUrl: flagUrl // Flag URL
-      }
+      };
 
-      const newCountry = new Country(payload)
-      return newCountry.save()
-    })
+      // Save the new country to the database
+      const newCountry = new Country(payload);
+      return newCountry.save();
+    });
 
-    // Wait for all country data to be saved in parallel
-    await Promise.all(countryPromises)
+    // Filter out any null values (countries that were skipped because they already exist)
+    const results = await Promise.all(countryPromises);
+    
+    // Filter out any `null` entries from the results (in case any country was skipped)
+    const savedCountries = results.filter(result => result !== null);
 
     // Send success response
     sendResponse(res, {
       statusCode: StatusCodes.CREATED,
       status: 'success',
-      message: 'Countries added successfully!'
-    })
+      message: `${savedCountries.length} countries added successfully!`
+    });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     sendResponse(res, {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       status: 'error',
       message: `An error occurred while inserting countries: ${error.message}`
-    })
+    });
   }
-}
+};
+
 
 const getCountries = async (req, res) => {
   const countries = await Country.find().select('-_id -__v')
