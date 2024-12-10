@@ -46,7 +46,7 @@ const userLogin = async (req, res) => {
     _id: user._id,
     accessToken,
     refreshToken,
-    isEmailVerified: isSocial? true : user.isEmailVerified
+    isEmailVerified: isSocial ? true : user.isEmailVerified
   }
 
   sendResponse(res, {
@@ -56,47 +56,6 @@ const userLogin = async (req, res) => {
     data: userInfo
   })
 }
-
-// // controller for social auth (login/signup)
-// const socialAuth = async (req, res) => {
-//   const { fcmToken } = req.body
-
-//   req.body.userPlatform =
-
-//   if (!userInfo) {
-//     throw new CustomError.BadRequestError('Invalid social login token!')
-//   }
-
-//   const existingUser = await User.findOne({ socialId: userInfo.id, socialProvider })
-//   if (existingUser) {
-//     // Existing user login
-//     sendResponse(res, {
-//       statusCode: StatusCodes.OK,
-//       status: 'success',
-//       message: 'Login successful',
-//       data: existingUser
-//     })
-//   } else {
-//     // New social user sign-up
-//     const newUser = new User({
-//       fullName: userInfo.name,
-//       email: userInfo.email,
-//       socialId: userInfo.id,
-//       socialProvider,
-//       loginMethod,
-//       isEmailVerified: true,
-//       image: userInfo.picture // Assume profile picture URL is provided
-//     })
-
-//     const savedUser = await newUser.save()
-//     sendResponse(res, {
-//       statusCode: StatusCodes.CREATED,
-//       status: 'success',
-//       message: 'User creation successful',
-//       data: savedUser
-//     })
-//   }
-// }
 
 // controller for resend email verification code
 const resendEmailVerificationCode = async (req, res) => {
