@@ -38,7 +38,7 @@ const updateFriend = async (playerId, friendId, playingAt) => {
 
 // service for get friends by userId
 const getFriendsByUserId = async (userId) => {
-  return await Friend.findOne({ userId }).populate('friends.friendId').sort({ 'friends.playingAt': -1 })
+  return await Friend.findOne({ userId }).populate('friends.friendId').sort({ 'createdAt': -1 })
 }
 
 export default {

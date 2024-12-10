@@ -149,8 +149,8 @@ const createQuizSession = async (req, res) => {
   await matchHistoryServices.updateMatchHistory(opponentId, quizSessionData.participantId, opponentQuizResult, opponentNewXP)
 
   // ....................make friend or update existing friend playing time.........................
-  await friendServices.updateFriend(quizSessionData.participantId, opponentId, matchDate)
-  await friendServices.updateFriend(opponentId, quizSessionData.participantId, opponentMatchDate)
+  // await friendServices.updateFriend(quizSessionData.participantId, opponentId, matchDate)
+  // await friendServices.updateFriend(opponentId, quizSessionData.participantId, opponentMatchDate)
 
   // .................................transfer failed question into review mode...............................
   // player

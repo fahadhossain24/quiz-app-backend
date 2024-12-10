@@ -4,6 +4,7 @@ import authorization from "../../middlewares/authorization.js";
 
 const friendsRouter = express.Router()
 
+friendsRouter.post('/add', authorization('user'), friendControllers.addFriend)
 friendsRouter.get('/retrive/:userId', authorization('user'), friendControllers.getFriendsByUserId)
 
 export default friendsRouter
