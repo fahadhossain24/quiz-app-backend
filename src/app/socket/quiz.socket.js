@@ -1,3 +1,5 @@
+import handlePlayerDisconnect from '../modules/quizModules/quiz/quiz.controllers.js'
+
 const connectedUsers = {}
 const activeAppUsers = []
 const realtimeQuiz = (io) => {
@@ -100,6 +102,7 @@ const realtimeQuiz = (io) => {
           activeAppUsers.splice(index, 1)
         }
       }
+      handlePlayerDisconnect(userId)
       // console.log(activeAppUsers)
     })
   })
