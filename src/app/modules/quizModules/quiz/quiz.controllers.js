@@ -8,7 +8,7 @@ import IdGenerator from '../../../../utils/idGenerator.js'
 import config from '../../../../config/index.js'
 import { io, connectedUsers, activeAppUsers } from '../../../../server.js'
 
-// controller for init new quiz
+// ...........................controller for init new quiz.........................................
 const initQuiz = async (req, res) => {
   const quizData = req.body
 
@@ -130,7 +130,7 @@ const initQuiz = async (req, res) => {
 //   })
 // }
 
-// controller for init new quiz 1 vs 1
+//........................controller for init new quiz 1 vs 1.......................................
 let queue = [] // Array to track players waiting for a match
 let activePlayers = new Set() // Set to track players currently playing a quiz
 
@@ -139,12 +139,15 @@ const initQuizOneVsOne = async (req, res) => {
   const playerId = quizData.player // Player who clicked "Play"
 
   // Check if the player is already in an active quiz or in the queue
-  if (activePlayers.has(playerId)) {
-    return sendResponse(res, {
-      statusCode: StatusCodes.BAD_REQUEST,
-      status: 'error',
-      message: 'You are already in a quiz or waiting in the queue!'
-    })
+  // if (activePlayers.has(playerId)) {
+  //   return sendResponse(res, {
+  //     statusCode: StatusCodes.BAD_REQUEST,
+  //     status: 'error',
+  //     message: 'You are already in a quiz or waiting in the queue!'
+  //   })
+  // }
+  if (queue.includes(playerId)) {
+    queue = queue.filter((id) => id !== playerId)
   }
 
   const player = await userServices.getSpecificUser(playerId)
@@ -205,7 +208,7 @@ const initQuizOneVsOne = async (req, res) => {
         io.in(participantASocketId).socketsJoin(quizId) // Player A joins the room
         // Emit an event to Player A that the quiz is starting
         io.to(participantASocketId).emit('quiz-1v1-start', {
-          // quizId,
+          quiz,
           status: 'ready',
           message: 'Game is starting!'
         })
@@ -238,14 +241,131 @@ const initQuizOneVsOne = async (req, res) => {
 
 // Optionally handle player disconnection or leave-queue event
 // A function to handle player disconnection and cleanup
-const handlePlayerDisconnect = (userId) => {
+export const handlePlayerDisconnect = (userId) => {
   // Remove from the queue if present
   queue = queue.filter((id) => id !== userId)
   activePlayers.delete(userId)
 }
 
+// .................................controller for rematch 1v1 quiz...................................
+// Function to handle player rematch request
+let rematchQueue = [] // Queue to store player pairs for rematch
+
+const initRematchOneVsOne = async (req, res) => {
+  const { playerId, opponentId } = req.body
+  const existingPair = rematchQueue.find(
+    (pair) => (pair.playerA === playerId && pair.playerB === opponentId) || (pair.playerA === opponentId && pair.playerB === playerId)
+  )
+
+  if (!existingPair) {
+    // Add player pair to rematch queue
+    rematchQueue.push({ playerA: playerId, playerB: opponentId })
+    console.log(rematchQueue)
+    // Notify the opponent that the first player wants a rematch
+    const opponentSocketId = connectedUsers[opponentId]
+    io.to(opponentSocketId).emit('rematch-request', { opponentId: playerId, message: 'Your opponent wants to play rematch' })
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      status: 'success',
+      message: 'Waiting for an opponent response!'
+    })
+  } else {
+    // Check if the player is attempting to click "rematch" again (i.e., same player)
+    console.log(existingPair, playerId)
+    if (existingPair.playerA === playerId) {
+      // If the player is trying to click rematch again, throw an error or send a response
+      return sendResponse(res, {
+        statusCode: StatusCodes.BAD_REQUEST,
+        status: 'error',
+        message: 'You have already requested a rematch or are already in a pairing queue.'
+      })
+    }
+    // Both players want a rematch, start the quiz
+    startRematchQuiz(playerId, opponentId, res)
+  }
+}
+
+// Function to handle home button click
+const backToHome = (req, res) => {
+  const { playerId, opponentId } = req.body
+  // Remove the player pair from the rematch queue
+  rematchQueue = rematchQueue.filter(
+    (pair) => !(pair.playerA === playerId && pair.playerB === opponentId) && !(pair.playerA === opponentId && pair.playerB === playerId)
+  )
+  // Emit event to both players to clear the rematch and go back to the homepage
+  const playerSocketId = connectedUsers[playerId]
+  const opponentSocketId = connectedUsers[opponentId]
+  io.to(playerSocketId).emit('back-to-home', { message: 'Your opponent is back to home!' })
+  io.to(opponentSocketId).emit('back-to-home', { message: 'Your opponent is back to home!' })
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    status: 'success',
+    message: 'Back to home successfull!'
+  })
+}
+
+// Function to start the rematch quiz
+const startRematchQuiz = async (playerId, opponentId, res) => {
+  // Start the new quiz for the players
+  const playerA = await userServices.getSpecificUser(playerId)
+  const playerB = await userServices.getSpecificUser(opponentId)
+  const quizId = IdGenerator.generateId()
+  const randomQuestions = await questionServices.getRandomQuestion(Number(config.question_count))
+  const quizData = {
+    quizId,
+    participantA: playerA,
+    participantB: playerB,
+    questions: randomQuestions.map((question) => ({
+      question: question.question,
+      _mainId: question._id,
+      questionId: question.questionId,
+      readTime: question.readTime,
+      answerTime: question.answerTime,
+      options: question.options,
+      useCount: question.useCount,
+      speciality: question.speciality,
+      condition: question.condition,
+      explanation: question.explanation
+    }))
+  }
+
+  const quiz = await quizServices.initQuiz(quizData)
+
+  // Create the quiz room for further interactions
+  const participantASocketId = connectedUsers[playerId]
+  const participantBSocketId = connectedUsers[opponentId]
+
+  // Add both players to the quiz room
+  if (participantASocketId) {
+    io.in(participantASocketId).socketsJoin(quizId) // Player A joins the room
+    io.to(participantBSocketId).emit('quiz-1v1-start', {
+      quiz,
+      status: 'ready',
+      message: 'Rematch is starting!'
+    })
+  }
+  if (participantBSocketId) {
+    io.in(participantBSocketId).socketsJoin(quizId) // Player B joins the room
+  }
+
+  // Mark both players as active and remove them from the rematch queue
+  rematchQueue = rematchQueue.filter(
+    (pair) => !(pair.playerA === playerId && pair.playerB === opponentId) && !(pair.playerA === opponentId && pair.playerB === playerId)
+  )
+
+  // Send response to the client to confirm the rematch quiz has started
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    status: 'success',
+    message: 'Rematch quiz started successfully!',
+    data: quiz
+  })
+}
+
 export default {
   initQuiz,
   initQuizOneVsOne,
-  handlePlayerDisconnect
+  initRematchOneVsOne,
+  backToHome
 }

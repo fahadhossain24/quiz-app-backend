@@ -1,4 +1,5 @@
-import handlePlayerDisconnect from '../modules/quizModules/quiz/quiz.controllers.js'
+// import {handlePlayerDisconnect} from '../modules/quizModules/quiz/quiz.controllers.js'
+import { handlePlayerDisconnect } from "../modules/quizModules/quiz/quiz.controllers.js"
 
 const connectedUsers = {}
 const activeAppUsers = []
@@ -80,14 +81,14 @@ const realtimeQuiz = (io) => {
     })
 
     // Real-time score update handling
-    socket.on('update-score', ({ quizId, participantId, score, state }) => {
+    socket.on('update-score', ({ quizId, participantId, score, state, isCompletedAnswer }) => {
       if (!quizId || !participantId || score === undefined) {
         socket.emit('error', { message: 'Incomplete score data' })
         return
       }
 
       // Broadcast the score update to the other participant
-      socket.to(quizId).emit('score-update', { participantId, score, state })
+      socket.to(quizId).emit('score-update', { participantId, score, state, isCompletedAnswer })
     })
 
     // Handle disconnection

@@ -7,12 +7,12 @@ const createSpeciality = async (data) => {
 
 // service for get specific speciality
 const getAllSpeciality = async () => {
-  return await Speciality.find()
+  return await Speciality.find().populate('conditions')
 }
 
 // service for get specific speciality
 const getSpecificSpeciality = async (id) => {
-  return await Speciality.findOne({ _id: id })
+  return await Speciality.findOne({ _id: id }).populate('conditions')
 }
 
 // service for update specific speciality

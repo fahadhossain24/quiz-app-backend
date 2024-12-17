@@ -175,7 +175,7 @@ const insertUniversity = async (req, res) => {
 
   // If no universities are found, handle it
   if (response.data.length === 0) {
-    throw new CustomError.BadRequestError('No universities found!')
+    throw new CustomError.NotFoundError('No universities found!')
   }
   // console.log(response.data)
   const universityPromises = response.data.map((universityData) => {

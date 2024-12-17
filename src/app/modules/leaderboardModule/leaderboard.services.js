@@ -6,7 +6,7 @@ const getOrCreateLeaderboardOfAUser = async (userId) => {
   let leaderboard = await Leaderboard.findOne({ userId })
 
   if (!leaderboard) {
-    const totalUserCount = await Leaderboard.countDocuments()
+    const totalUserCount = await Leaderboard.countDocuments() + 1
     const payload = {
       userId,
       rank: totalUserCount

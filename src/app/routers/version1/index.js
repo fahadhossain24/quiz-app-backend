@@ -18,6 +18,7 @@ import dashboardRouter from '../../modules/dashboard/dashboard.routes.js'
 import adminRouter from '../../modules/adminModule/admin.routes.js'
 import countryRouter from '../../modules/countryModule/country.routes.js'
 import universityRouter from '../../modules/countryModule/university.routes.js'
+import conditionRouter from '../../modules/conditionModule/condition.routes.js'
 
 const router = express.Router()
 
@@ -40,5 +41,6 @@ router.use('/dashboard', dashboardRouter)
 router.use('/admin', adminRouter)
 router.use('/country', countryRouter)
 router.use('/university', universityRouter)
+router.use('/condition', conditionRouter)
 
 export default router

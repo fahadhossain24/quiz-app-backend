@@ -3,11 +3,17 @@ import CustomError from '../../errors/index.js'
 import specialityServices from './speciality.services.js'
 import fileUploader from '../../../utils/fileUploader.js'
 import sendResponse from '../../../shared/sendResponse.js'
+import Speciality from './speciality.model.js'
 
 // controller for create new speciality
 const createSpeciality = async (req, res) => {
   const specialityData = req.body
-  // console.log(req.body)
+
+  const specialityCount = await Speciality.countDocuments()
+  if(specialityCount > 22){
+    throw new CustomError.BadRequestError("You are not allowed to create speciality more than 22!")
+  }
+
   if (req.files || req.files.image) {
     const imagePath = await fileUploader(
       req.files,
@@ -17,41 +23,41 @@ const createSpeciality = async (req, res) => {
     specialityData.image = imagePath
   }
 
-  const conditionNames = ['condition1', 'condition2', 'condition3']
+  // const conditionNames = ['condition1', 'condition2', 'condition3']
 
   // Use Promise.all to upload all condition PDFs in parallel
-  const pdfUploadPromises = conditionNames.map(async (conditionName) => {
-    const conditionKey = `${conditionName}.name` // Form key for the name of the condition
-    const pdfKey = `${conditionName}.pdf` // Form key for the PDF file
+  // const pdfUploadPromises = conditionNames.map(async (conditionName) => {
+  //   const conditionKey = `${conditionName}.name` // Form key for the name of the condition
+  //   const pdfKey = `${conditionName}.pdf` // Form key for the PDF file
 
-    if (req.files && req.files[`${conditionName}.pdf`]) {
-      // Check if PDF is uploaded for the condition
-      const pdfPath = await fileUploader(
-        req.files,
-        `${conditionName}-${specialityData[conditionKey]}-pdf-of-${specialityData.name}`,
-        `${conditionName}.pdf`
-      )
+  //   if (req.files && req.files[`${conditionName}.pdf`]) {
+  //     // Check if PDF is uploaded for the condition
+  //     const pdfPath = await fileUploader(
+  //       req.files,
+  //       `${conditionName}-${specialityData[conditionKey]}-pdf-of-${specialityData.name}`,
+  //       `${conditionName}.pdf`
+  //     )
 
-      if (!specialityData[conditionName]) {
-        specialityData[conditionName] = {}
-      }
+  //     if (!specialityData[conditionName]) {
+  //       specialityData[conditionName] = {}
+  //     }
 
-      // Set the PDF path dynamically
-      specialityData[conditionName].pdf = pdfPath
+  //     // Set the PDF path dynamically
+  //     specialityData[conditionName].pdf = pdfPath
 
-      // Set the name for the condition dynamically (if provided in the form data)
-      specialityData[conditionName].name = specialityData[conditionKey]
-    } else {
-      // If no PDF is uploaded, set the PDF to null for the condition
-      specialityData[conditionName] = {
-        ...specialityData[conditionName],
-        pdf: null
-      }
-    }
-  })
+  //     // Set the name for the condition dynamically (if provided in the form data)
+  //     specialityData[conditionName].name = specialityData[conditionKey]
+  //   } else {
+  //     // If no PDF is uploaded, set the PDF to null for the condition
+  //     specialityData[conditionName] = {
+  //       ...specialityData[conditionName],
+  //       pdf: null
+  //     }
+  //   }
+  // })
 
-  // Wait for all PDFs to be uploaded
-  await Promise.all(pdfUploadPromises)
+  // // Wait for all PDFs to be uploaded
+  // await Promise.all(pdfUploadPromises)
 
   const speciality = await specialityServices.createSpeciality(specialityData)
   if (!speciality) {

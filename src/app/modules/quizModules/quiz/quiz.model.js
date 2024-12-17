@@ -18,7 +18,8 @@ const quizSchema = new mongoose.Schema(
       email: String,
       university: String,
       profession: String,
-      image: String
+      image: String,
+      rank: String
     },
     participantB: {
       fullName: String,
@@ -31,7 +32,8 @@ const quizSchema = new mongoose.Schema(
       email: String,
       university: String,
       profession: String,
-      image: String
+      image: String,
+      rank: String
     },
     questions: [
       {

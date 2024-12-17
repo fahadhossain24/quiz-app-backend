@@ -7,30 +7,36 @@ const specialitySchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    condition1: {
-        name: {
-            type: String,
-        },
-        pdf: {
-            type: String,
-        }
-    },
-    condition2: {
-        name: {
-            type: String,
-        },
-        pdf: {
-            type: String,
-        }
-    },
-    condition3: {
-        name: {
-            type: String,
-        },
-        pdf: {
-            type: String,
-        }
-    },
+    conditions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'condition'
+      }
+    ],
+    // condition1: {
+    //     name: {
+    //         type: String,
+    //     },
+    //     pdf: {
+    //         type: String,
+    //     }
+    // },
+    // condition2: {
+    //     name: {
+    //         type: String,
+    //     },
+    //     pdf: {
+    //         type: String,
+    //     }
+    // },
+    // condition3: {
+    //     name: {
+    //         type: String,
+    //     },
+    //     pdf: {
+    //         type: String,
+    //     }
+    // },
     status: {
       type: String,
       enum: ['active', 'blocked', 'disabled'],

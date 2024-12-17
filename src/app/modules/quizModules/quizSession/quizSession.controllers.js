@@ -83,7 +83,7 @@ const createQuizSession = async (req, res) => {
     Number(config.min_xp_adjustment),
     Number(config.max_xp_adjustment)
   )
-  
+
   // opponent
   // const { newXP: opponentNewXP, xpChange: opponentGameXP } = calculateEloXP(
   //   opponentLeaderboard.xp,
@@ -296,13 +296,23 @@ const createQuizSession = async (req, res) => {
 
   // ...............................finally emit opponent result................................
   const opponentSocketId = connectedUsers[opponentId]
+  // console.log(opponentSocketId, opponentId)
   if (opponentSocketId) {
-    io.to(opponentSocketId).emit('get-result', {
-      result: opponentQuizResult,
-      xp: opponentGameXP,
-      playerScore: opponentQuizSession.score,
-      opponentScore: playerQuizSession.score
-    })
+    if (quizSessionData.isOneVsOne) {
+      io.to(opponentSocketId).emit('get-result-1v1', {
+        result: opponentQuizResult,
+        xp: opponentGameXP,
+        playerScore: opponentQuizSession.score,
+        opponentScore: playerQuizSession.score
+      })
+    } else {
+      io.to(opponentSocketId).emit('get-result', {
+        result: opponentQuizResult,
+        xp: opponentGameXP,
+        playerScore: opponentQuizSession.score,
+        opponentScore: playerQuizSession.score
+      })
+    }
   }
 
   // Send the final response with result and XP data

@@ -13,9 +13,9 @@ const getQuestionHistoryByUserId = async (req, res) => {
   if (isCurrect) {
     const allQuestionHistory = await questionHistoryServices.getQuestionHistoryByUserId(userId, isCurrect)
     if (isCurrect === 'true') {
-      questionHistory = allQuestionHistory.questions.filter((q) => q.isCurrect === true)
+      questionHistory = allQuestionHistory?.questions.filter((q) => q.isCurrect === true)
     } else {
-      questionHistory = allQuestionHistory.questions.filter((q) => q.isCurrect === false)
+      questionHistory = allQuestionHistory?.questions.filter((q) => q.isCurrect === false)
     }
   } else {
     questionHistory = await questionHistoryServices.getQuestionHistoryByUserId(userId, isCurrect)

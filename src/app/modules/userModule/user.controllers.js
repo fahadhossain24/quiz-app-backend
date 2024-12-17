@@ -8,6 +8,7 @@ import CustomError from '../../errors/index.js'
 import leaderboardServices from '../leaderboardModule/leaderboard.services.js'
 import jwtHelpers from '../../../healpers/healper.jwt.js'
 import config from '../../../config/index.js'
+// import {getOrCreateLeaderboardOfAUser} from '../leaderboardModule/leaderboard.services.js'
 
 // controller for create new user
 const createUser = async (req, res) => {
@@ -40,6 +41,10 @@ const createUser = async (req, res) => {
   if (!user) {
     throw new CustomError.BadRequestError('Failed to create new user!')
   }
+
+  const leaderboard = await leaderboardServices.getOrCreateLeaderboardOfAUser(user._id)
+  user.rank = leaderboard.rank
+  await user.save()
 
   const { password, ...userInfoAcceptPass } = user.toObject()
 

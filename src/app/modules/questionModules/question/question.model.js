@@ -53,7 +53,8 @@ const questionSchema = new mongoose.Schema(
       default: 0
     },
     speciality: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'speciality',
       required: true
     },
     importanceLavel: {
@@ -62,7 +63,8 @@ const questionSchema = new mongoose.Schema(
       default: 3,
     },
     condition: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'condition',
       required: true
     },
     explanation: String
