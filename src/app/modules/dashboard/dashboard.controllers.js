@@ -229,7 +229,11 @@ const getDashboardMetrics = async (req, res) => {
   }
 
   // Format the active users data (direct count)
-  const activeUserChartData = activeUsersOverview.map((item) => item.activeUsers.length); // Number of distinct active users
+  // const activeUserChartData = activeUsersOverview.map((item) => item.activeUsers.length); // Number of distinct active users
+  let activeUserChartData = new Array(12).fill(0); // Ensure an array with 12 elements, initialized to 0
+  activeUsersOverview.forEach(({ _id, activeUsers }) => {
+    activeUserChartData[_id - 1] = activeUsers.length; // Fill active users count for each month
+  });
 
   // Format the quiz data (percentage-based)
   const quizChartData = formatOverviewData(quizOverview, totalQuizzes);
