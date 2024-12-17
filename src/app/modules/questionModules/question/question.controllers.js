@@ -33,7 +33,7 @@ const createQuestion = async (req, res) => {
 
 // controller for get all questions
 const getSpecificQuestion = async (req, res) => {
-  const {id} = req.params
+  const { id } = req.params
 
   const question = await questionServices.getSpecificQuestion(id)
 
@@ -53,7 +53,7 @@ const getSpecificQuestion = async (req, res) => {
 const getAllQuestion = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
-  const {query} = req.query
+  const { query } = req.query
 
   // Calculate the starting index for pagination
   const skip = (page - 1) * limit
@@ -131,7 +131,7 @@ const deleteSpecificQuestion = async (req, res) => {
 const searchQuestions = async (req, res) => {
   const page = parseInt(req.query.page) || 1
   const limit = parseInt(req.query.limit) || 9
-  const {query} = req.query
+  const { query } = req.query
 
   // Calculate the starting index for pagination
   const skip = (page - 1) * limit
@@ -158,11 +158,30 @@ const searchQuestions = async (req, res) => {
   })
 }
 
+// Controller to handle bulk question creation
+const createQuestionsFromFile = async (req, res) => {
+  const questionsData = req.body.questions // Assuming this is an array
+
+  // Validate the incoming data
+  if (!Array.isArray(questionsData) || questionsData.length === 0) {
+    return res.status(400).json({ message: 'Invalid data structure. Expected an array of questions.' })
+  }
+
+  // Call the bulk create service
+  await questionServices.bulkCreateQuestions(questionsData)
+
+  // Send response with created questions
+  res.status(201).json({
+    message: 'Questions successfully created',
+  })
+}
+
 export default {
   createQuestion,
   getSpecificQuestion,
   getAllQuestion,
   searchQuestions,
   updateSpecificQuestion,
-  deleteSpecificQuestion
+  deleteSpecificQuestion,
+  createQuestionsFromFile
 }

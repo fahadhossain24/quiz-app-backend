@@ -13,5 +13,6 @@ questionRouter.get('/all', authorization('admin', 'super-admin'), questionContro
 // questionRouter.get('/search', authorization('admin', 'super-admin'), questionControllers.searchQuestions);
 questionRouter.patch('/update/:id', authorization('admin', 'super-admin'), requestValidator(QuestionValidationZodSchema.getSpecificQuestionZodSchema), questionControllers.updateSpecificQuestion)
 questionRouter.delete('/delete/:id', authorization('admin', 'super-admin'), requestValidator(QuestionValidationZodSchema.getSpecificQuestionZodSchema), questionControllers.deleteSpecificQuestion)
+questionRouter.post('/bulk-create', questionControllers.createQuestionsFromFile);
 
 export default questionRouter
