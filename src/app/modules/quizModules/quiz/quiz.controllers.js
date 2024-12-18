@@ -263,7 +263,7 @@ const initRematchOneVsOne = async (req, res) => {
     console.log(rematchQueue)
     // Notify the opponent that the first player wants a rematch
     const opponentSocketId = connectedUsers[opponentId]
-    io.to(opponentSocketId).emit('rematch-request', { opponentId: playerId, message: 'Your opponent wants to play rematch' })
+    io.to(opponentSocketId).emit('rematch-request', { opponentId: playerId, message: 'Your opponent wants a rematch!' })
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       status: 'success',

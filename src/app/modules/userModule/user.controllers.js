@@ -56,7 +56,7 @@ const createUser = async (req, res) => {
     const mailOptions = {
       from: 'medroyale2@gmail.com',
       to: userData.email,
-      subject: 'Medroyale - Email Verification',
+      subject: 'Medroyale - Email verification',
       text: content
     }
 

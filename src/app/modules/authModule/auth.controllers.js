@@ -83,7 +83,7 @@ const resendEmailVerificationCode = async (req, res) => {
   const mailOptions = {
     from: 'medroyale2@gmail.com',
     to: email,
-    subject: 'Medroyale - Email Verification',
+    subject: 'Medroyale - Email verification',
     text: content
   }
 
