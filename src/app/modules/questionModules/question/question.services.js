@@ -9,7 +9,7 @@ const createQuestion = async (data) => {
 // service for get specific question
 const getSpecificQuestion = async (id) => {
   // console.log(id)
-  return await Question.findOne({ _id: id })
+  return await Question.findOne({ _id: id }).populate('speciality').populate('condition')
 }
 
 // service for get random 8 question
