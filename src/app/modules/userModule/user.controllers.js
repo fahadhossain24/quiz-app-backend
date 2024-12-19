@@ -59,7 +59,6 @@ const createUser = async (req, res) => {
       subject: 'Medroyale - Email verification',
       text: content
     }
-
     sendMail(mailOptions)
   }
 

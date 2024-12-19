@@ -35,10 +35,12 @@ const addFriend = async (req, res) => {
   const user = await Friend.findOne({ userId })
 
   if (!user) {
-    throw new CustomError.NotFoundError('User not found!')
+    await Friend.create({ userId: userId, friends: [] })
+    // throw new CustomError.NotFoundError('User not found!')
   }
 
   // Check if the friendId already exists in the user's friends list
+
   const isFriend = user.friends.some((friend) => friend.friendId.toString() === friendId)
 
   if (isFriend) {

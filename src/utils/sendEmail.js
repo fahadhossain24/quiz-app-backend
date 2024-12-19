@@ -22,6 +22,7 @@ const sendMail = async ({ from, to, subject, text }) => {
 
         // Wait for the sendMail operation to complete
         let info = await transporter.sendMail(mailOptions);
+        console.log(info.messageId)
         // console.log('Message sent: %s', info.messageId);
         return true;
     } catch (error) {
