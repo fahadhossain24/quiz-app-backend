@@ -81,10 +81,16 @@ const resendEmailVerificationCode = async (req, res) => {
   // const verificationLink = `${config.server_base_url}/v1/auth/verify-email/${user._id}?userCode=${verification.code}`
   // const content = `Click the following link to verify your email: ${verificationLink}`
   const mailOptions = {
-    from: 'medroyale2@gmail.com',
+    from: 'admin@medroyale.net',
     to: email,
     subject: 'Medroyale - Email verification',
-    text: content
+    text: content,
+    replyTo: 'no-reply@medroyale.net', // Disable replies
+    headers: {
+      'X-Auto-Response-Suppress': 'OOF, AutoReply',
+      Precedence: 'bulk',
+      'Auto-Submitted': 'auto-generated'
+    }
   }
 
   sendMail(mailOptions)
@@ -167,10 +173,16 @@ const sendOTP = async (req, res) => {
     `
 
   const mailOptions = {
-    from: 'medroyale2@gmail.com',
+    from: 'admin@medroyale.net',
     to: email,
     subject: 'Medroyale - Password Reset OTP',
-    text: textContent
+    text: textContent,
+    replyTo: 'no-reply@medroyale.net', // Disable replies
+    headers: {
+      'X-Auto-Response-Suppress': 'OOF, AutoReply',
+      Precedence: 'bulk',
+      'Auto-Submitted': 'auto-generated'
+    }
   }
 
   sendMail(mailOptions)

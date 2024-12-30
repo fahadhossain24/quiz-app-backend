@@ -22,12 +22,12 @@ const sendMail = async ({ from, to, subject, text }) => {
 
         // Wait for the sendMail operation to complete
         let info = await transporter.sendMail(mailOptions);
-        console.log(info.messageId)
+        // console.log(info.messageId)
         // console.log('Message sent: %s', info.messageId);
         return true;
     } catch (error) {
-        throw new CustomError.BadRequestError('Failed to send mail!')
-        // console.error('Error sending mail: ', error);
+        console.log('Failed to send mail!')
+        // throw new CustomError.BadRequestError('Failed to send mail!')
         // return false;
     }
 };

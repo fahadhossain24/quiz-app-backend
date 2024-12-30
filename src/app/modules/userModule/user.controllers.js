@@ -54,10 +54,16 @@ const createUser = async (req, res) => {
     // const verificationLink = `${server_base_url}/v1/auth/verify-email/${user._id}?userCode=${userData.verification.code}`
     // const content = `Click the following link to verify your email: ${verificationLink}`
     const mailOptions = {
-      from: 'medroyale2@gmail.com',
+      from: 'admin@medroyale.net',
       to: userData.email,
       subject: 'Medroyale - Email verification',
-      text: content
+      text: content,
+      replyTo: 'no-reply@medroyale.net', // Disable replies
+      headers: {
+        'X-Auto-Response-Suppress': 'OOF, AutoReply',
+        Precedence: 'bulk',
+        'Auto-Submitted': 'auto-generated'
+      }
     }
     sendMail(mailOptions)
   }

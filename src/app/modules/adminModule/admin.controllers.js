@@ -34,7 +34,7 @@ const createAdmin = async (req, res) => {
 // controller for get all admin
 const getAllAdmin = async (req, res) => {
   const admins = await adminServices.getAllAdmin()
-  const adminsAcceptSuperAdmin = admins.filter(admin => admin.role !== 'super-admin')
+  const adminsAcceptSuperAdmin = admins.filter((admin) => admin.role !== 'super-admin')
   // if (admins.length === 0) {
   //   throw new CustomError.BadRequestError('No admin found!')
   // }
@@ -203,10 +203,16 @@ const sendOTP = async (req, res) => {
       `
 
   const mailOptions = {
-    from: 'medroyale2@gmail.com',
+    from: 'admin@medroyale.net',
     to: email,
     subject: 'Medroyale - Password Reset OTP',
-    text: textContent
+    text: textContent,
+    replyTo: 'no-reply@medroyale.net', // Disable replies
+    headers: {
+      'X-Auto-Response-Suppress': 'OOF, AutoReply',
+      Precedence: 'bulk',
+      'Auto-Submitted': 'auto-generated'
+    }
   }
 
   sendMail(mailOptions)
